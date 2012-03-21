@@ -1,6 +1,20 @@
 package com.android.aigproject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +54,10 @@ public class MainListAdapter extends ArrayAdapter<ListItem>{
             row = inflater.inflate(layoutResourceId, parent, false);
             
             holder = new ListItemHolder();
-            holder.imgIcon = (ImageView)row.findViewById(R.id.imgIcon);
+            
+            ImageView image = (ImageView)row.findViewById(R.id.imgIcon);
+            image.setImageBitmap(loadImageByURL(holder.imageFileURL));
+            holder.imgIcon = image;
             holder.txtTitle = (TextView)row.findViewById(R.id.txtTitle);
             
             row.setTag(holder);
@@ -51,9 +68,10 @@ public class MainListAdapter extends ArrayAdapter<ListItem>{
         }
     	
     	
-        ListItem weather = data[position];
-        holder.txtTitle.setText(weather.title);
-        holder.imgIcon.setImageResource(weather.icon);
+        ListItem source_item = data[position];
+        holder.txtTitle.setText(source_item.title);
+//        holder.imgIcon.setImageResource(source_item.icon);
+        holder.imgIcon.setImageBitmap(loadImageByURL(holder.imageFileURL));
     	return row;
     }
     
@@ -62,6 +80,34 @@ public class MainListAdapter extends ArrayAdapter<ListItem>{
     static class ListItemHolder {
     	ImageView imgIcon;
     	TextView txtTitle;
+    	String imageFileURL;
     }
+    
+    private Bitmap loadImageByURL(String imageFileURL) {
+		try {
+			URL url = new URL(imageFileURL);
+			URLConnection conn = url.openConnection();
+			HttpURLConnection httpConn = (HttpURLConnection) conn;
+			httpConn.setRequestMethod("GET");
+			httpConn.connect();
+			if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				InputStream inputStream = httpConn.getInputStream();
+				Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+				inputStream.close();
+				return bitmap;
+			} else {
+				// return null;
+			}
+
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+    
     
 }
