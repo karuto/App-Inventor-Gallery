@@ -56,7 +56,7 @@ public class MainListAdapter extends ArrayAdapter<ListItem>{
             holder = new ListItemHolder();
             
             ImageView image = (ImageView)row.findViewById(R.id.imgIcon);
-            image.setImageBitmap(loadImageByURL(holder.imageFileURL));
+//            image.setImageBitmap(loadImageByURL(holder.imageFileURL));
             holder.imgIcon = image;
             holder.txtTitle = (TextView)row.findViewById(R.id.txtTitle);
             
@@ -71,7 +71,7 @@ public class MainListAdapter extends ArrayAdapter<ListItem>{
         ListItem source_item = data[position];
         holder.txtTitle.setText(source_item.title);
 //        holder.imgIcon.setImageResource(source_item.icon);
-        holder.imgIcon.setImageBitmap(loadImageByURL(holder.imageFileURL));
+        holder.imgIcon.setImageBitmap(loadImageByURL(source_item.imageFileURL));
     	return row;
     }
     
