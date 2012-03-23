@@ -22,7 +22,7 @@ public class CategoryActivity extends Activity {
 		Log.d("CATS","###########################");
 		
 		ArrayList<HashMap<String, Object>> catsArray = new ArrayList<HashMap<String, Object>>();
-		catsArray = AIGProjectActivity.retrieveJSONArray(source,"");
+		catsArray = AIGProjectActivity.retrieveQueryArray(source);
 		
 		TextView cat = (TextView) findViewById(R.id.cats);
 		Log.d("CATS","$$$$$$$$$$$$$$$$$$$$$$$$$$$");

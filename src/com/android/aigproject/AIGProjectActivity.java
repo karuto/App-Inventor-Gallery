@@ -152,7 +152,7 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		Runnable r = new Runnable() {
 			public void run() {
 				String URL = "http://app-inventor-gallery.appspot.com/rpc?tag=search:";
-				ArrayList<HashMap<String, Object>> jSonInfo = retrieveJSONArray(URL, query
+				ArrayList<HashMap<String, Object>> jSonInfo = retrieveQueryArray(URL, query
 						.getText().toString());
 				ListItem listview_data[] = new ListItem[jSonInfo.size()];
 				for (int i = 0; i < jSonInfo.size(); i++) {
@@ -286,19 +286,10 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		}
 		return null;
 	}
-
-	
-	public static ArrayList<HashMap<String, Object>> retrieveJSONArray(String URL, String query) {
+	public static ArrayList<HashMap<String, Object>> retrieveQueryArray(String URL) {
 		String s;
 		JSONArray results;
-		
-		if (query.equals("")) {	// it's processing a regular JSON request
-			Log.d("MAIN","HELLO GENERALGET");
-			s = UrlReader.generalGet(URL);
-		}	else	{	// it's processing an actual search query
-			s = UrlReader.search(query, URL);
-		}
-			
+		s = UrlReader.generalGet(URL);
 		if (s == null) {
 			return null;
 		}
@@ -306,14 +297,8 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 			JSONObject o = new JSONObject(s);
 			results = (JSONArray) o.get("result");
 			Log.d("MAIN",String.valueOf(results.length()));
+			return parseArrayResult(results);
 			
-			if (query.equals("")) {	// it's processing a regular JSON request
-				return parseArrayResult(results);
-			}	else	{	// it's processing an actual search query
-				return parseSearchResult(results);
-			}
-					
-
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -321,8 +306,35 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		
 		return null;
 
+	
+	
 	}
+	
+	public static ArrayList<HashMap<String, Object>> retrieveQueryArray(String URL, String query) {
+		String s;
+		JSONArray results;
+		s = UrlReader.search(query, URL);			
+		if (s == null) {
+			return null;
+		}
+		try {
+			JSONObject o = new JSONObject(s);
+			results = (JSONArray) o.get("result");
+			Log.d("MAIN",String.valueOf(results.length()));
+			return parseSearchResult(results);					
 
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return null;
+
+	}
+	
+	/*
+	 * Returns an arraylist with String as keys and no objects. 
+	 * ONLY USED FOR TRAVERSING CATEGORY. (as of now, 2012/03/22)
+	 */
 	private static ArrayList<HashMap<String, Object>> parseArrayResult(JSONArray results) {
 
 		StringBuffer sb = new StringBuffer();
@@ -351,7 +363,10 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 	}
 	
 	
-	
+	/*
+	 * Returns an arraylist with JSON Objects as values, used for general browsing
+	 * like searching, viewing a Apps-list, etc...
+	 */
 	private static ArrayList<HashMap<String, Object>> parseSearchResult(JSONArray results) {
 
 		StringBuffer sb = new StringBuffer();
