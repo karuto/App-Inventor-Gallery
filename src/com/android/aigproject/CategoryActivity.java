@@ -8,13 +8,18 @@ import org.json.JSONArray;
 import com.android.aigproject.AIGProjectActivity.MyListViewListener;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
-public class CategoryActivity extends Activity {
+public class CategoryActivity extends Activity{
 
 	private ListView categoryListView;
 
@@ -70,5 +75,24 @@ public class CategoryActivity extends Activity {
 
 //		categoryListView.setOnItemClickListener(new MyListViewListener());
 	}
+	
+	
+	class MyListViewListener implements OnItemClickListener {
+		
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			// TODO Auto-generated method stub
+			// get current ListItem selected
+			ListItem curItem = (ListItem) (parent.getAdapter()
+					.getItem(position));
+			Toast.makeText(CategoryActivity.this,
+					"position of " + curItem.title, Toast.LENGTH_SHORT).show();
+			String URL = "http://app-inventor-gallery.appspot.com/rpc?tag=search:";
+		}
+
+	}
+
+	
 	
 }
