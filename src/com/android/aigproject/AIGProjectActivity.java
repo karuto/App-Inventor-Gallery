@@ -101,6 +101,30 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 
 		listView1.setOnItemClickListener(new MyListViewListener());
 
+		View.OnClickListener buttonhandler =new View.OnClickListener() {
+			
+			public void onClick(View v) {
+		    	   Log.d("ks","enter onClick");
+				   switch(v.getId()) { 
+				   // Now, which button did they press, and take me to that class/activity
+				       case R.id.buttoncats:    //<<---- notice end line with colon, not a semicolon
+				    	   Log.d("ks","enter button");
+				    	   Intent gotoCategory = new Intent(AIGProjectActivity.this,
+									CategoryActivity.class);
+				    	   startActivity(gotoCategory);
+				    	   
+				    	   
+				       break;
+				   }				
+				
+			}
+		};
+		
+		Button catb = (Button) findViewById(R.id.buttoncats);
+		catb.setOnClickListener(buttonhandler);
+
+		
+		
 	}
 
 	private void createNewThread(final Context context) {
@@ -151,8 +175,16 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 
 	}
 
-	class MyListViewListener implements OnItemClickListener {
+	
 
+
+	
+	
+	
+	
+	
+	class MyListViewListener implements OnItemClickListener {
+		
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {

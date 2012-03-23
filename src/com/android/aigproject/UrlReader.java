@@ -35,6 +35,19 @@ public class UrlReader {
 
 		return html.toString();
 	}
+	
+	public static String generalGet(String URL) {
+		String html = null;
+		try {
+			html = UrlReader.read(URL);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return html;		
+		
+	}
+	
 
 	public static String search(String tagValue, String URL) {
 
