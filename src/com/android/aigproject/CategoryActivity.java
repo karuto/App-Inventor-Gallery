@@ -24,10 +24,20 @@ public class CategoryActivity extends Activity {
 		ArrayList<HashMap<String, Object>> catsArray = new ArrayList<HashMap<String, Object>>();
 		catsArray = AIGProjectActivity.retrieveQueryArray(source);
 		
-		TextView cat = (TextView) findViewById(R.id.cats);
-		Log.d("CATS","$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+		String categories[] = new String[20];
+		int i = 0;
+		for ( HashMap<String, Object> h : catsArray ) {
+			categories[i] = h.keySet().toString().substring(1, h.keySet().toString().length()-1);
+			i++;
+		}
 		
-		cat.setText("JSON### "+catsArray.toString());
+		TextView cat = (TextView) findViewById(R.id.cats);
+		String allofthem = "";
+		for ( String s : categories ) {
+			allofthem += s;
+			allofthem +="\n";
+		}
+		cat.setText(allofthem);
 	}
 	
 }
