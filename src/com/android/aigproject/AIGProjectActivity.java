@@ -15,10 +15,13 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -27,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +41,7 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 	TextView result;
 	EditText query;
 	Button switchTo;
+	ImageView waiting;
 
 	private ListView listView1;
 
@@ -48,22 +53,26 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 
 		search = (Button) findViewById(R.id.button1);
 		search.setOnClickListener(this);
+		waiting = (ImageView) findViewById(R.id.waiting);
+		waiting.setVisibility(View.INVISIBLE); 
+
+
 		query = (EditText) findViewById(R.id.editText1);
 		result = (TextView) findViewById(R.id.textView1);
 
-		ListItem listview_data[] = new ListItem[20];
-		String imageFileURL = "http://lh6.ggpht.com/JL2goqwVeu8ds9vGYTUPPcw4pF93TEgAnt0YG6eAaxzSE8W2sLa6cmw5bFoxNcgTPPCgJZ6SQWZE0dAj9Fo6trLft9S8pWOdPQ=s100";
+		// ListItem listview_data[] = new ListItem[20];
+		// String imageFileURL =
+		// "http://lh6.ggpht.com/JL2goqwVeu8ds9vGYTUPPcw4pF93TEgAnt0YG6eAaxzSE8W2sLa6cmw5bFoxNcgTPPCgJZ6SQWZE0dAj9Fo6trLft9S8pWOdPQ=s100";
+		//
+		// for (int i = 0; i < 20; i++) {
+		// String text = "API Picture " + i;
+		// listview_data[i] = new ListItem(R.drawable.ic_launcher, text,
+		// imageFileURL);
+		// }
 
-		for (int i = 0; i < 20; i++) {
-			String text = "API Picture " + i;
-			listview_data[i] = new ListItem(R.drawable.ic_launcher, text,
-					imageFileURL);
-		}
-		
-//		switchTo = (Button) findViewById(R.id.button2);
-//		switchTo.setOnClickListener(this);
+		// switchTo = (Button) findViewById(R.id.button2);
+		// switchTo.setOnClickListener(this);
 
-		
 		// ListItem listview_data[] = new ListItem[]
 		// {
 		// new ListItem(R.drawable.ic_launcher, "S1"),
@@ -76,8 +85,12 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		// };
 
 		// Defines the layout of each row in ListView.
+		ListItem listview_data2[] = new ListItem[0]; /*
+													 * begin with 0, so nothing
+													 * in there
+													 */
 		MainListAdapter adapter = new MainListAdapter(this, R.layout.list_item,
-				listview_data);
+				listview_data2);
 
 		listView1 = (ListView) findViewById(R.id.listView1);
 
@@ -86,6 +99,84 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		listView1.addHeaderView(header);
 		listView1.setAdapter(adapter);
 
+		listView1.setOnItemClickListener(new MyListViewListener());
+
+	}
+
+	private void createNewThread(final Context context) {
+
+		Thread thread = new Thread(new Runnable() {
+			public void run() {
+				try {
+					requestSearchingData(context);
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		thread.start();
+
+	}
+
+	public void requestSearchingData(final Context context) throws MalformedURLException,
+			IOException {
+
+		Runnable r = new Runnable() {
+			public void run() {
+				String URL = "http://app-inventor-gallery.appspot.com/rpc?tag=search:";
+				ArrayList<HashMap<String, Object>> jSonInfo = processQuery(query
+						.getText().toString(), URL);
+				ListItem listview_data[] = new ListItem[jSonInfo.size()];
+				for (int i = 0; i < jSonInfo.size(); i++) {
+					listview_data[i] = new ListItem(R.drawable.ic_launcher,
+							(String) jSonInfo.get(i).get("title"),
+							(String) jSonInfo.get(i).get("image1"));
+
+				}
+
+				MainListAdapter adapter = new MainListAdapter(context,
+						R.layout.list_item, listview_data);
+				listView1.setAdapter(adapter);
+			}
+		};
+		//r.run();
+		
+		
+		runOnUiThread(r);
+            
+
+	}
+
+	class MyListViewListener implements OnItemClickListener {
+
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			// TODO Auto-generated method stub
+
+			Intent nextScreen = new Intent(getApplicationContext(),
+					SecondScreenActivity.class);
+
+			// Sending data to another Activity
+
+			ListItem curItem = (ListItem) (parent.getAdapter()
+					.getItem(position));
+
+			// Log.e("n", inputName.getText()+"."+ inputEmail.getText());
+			nextScreen.putExtra("name", curItem.title);
+			nextScreen.putExtra("imageURL", curItem.imageFileURL);
+			Toast.makeText(AIGProjectActivity.this,
+					"position of " + curItem.title, Toast.LENGTH_SHORT).show();
+
+			startActivity(nextScreen);
+			overridePendingTransition(R.anim.push_left_in, R.anim.push_up_out);
+
+		}
+
 	}
 
 	@Override
@@ -93,27 +184,49 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		String URL = "http://app-inventor-gallery.appspot.com/rpc?tag=search:";
 
-		if (v == search) {
-			ArrayList<HashMap<String, Object>> jSonInfo = processQuery(query
-					.getText().toString(), URL);
-			ListItem listview_data[] = new ListItem[jSonInfo.size()];
-			for (int i = 0; i < jSonInfo.size(); i++) {
-				listview_data[i] = new ListItem(R.drawable.ic_launcher, (String) jSonInfo.get(i).get("title"),
-						(String) jSonInfo.get(i).get("image1"));
-				
-			}
-
-			MainListAdapter adapter = new MainListAdapter(this,
-					R.layout.list_item, listview_data);
-			listView1.setAdapter(adapter);
+		if (v == search) { 
+//			visible 0 Visible on screen; the default value.  
+//			invisible 1 Not displayed, but taken into account during layout (space is left for it).  
+//			gone 2 Completely hidden, as if the view had not been added.  
+			
+			
+			
+			
+			//v.setBackgroundColor(Color.RED);
+			v.setClickable(false);
+			waiting.setVisibility(View.VISIBLE);
+			createNewThread(this);
+			v.setClickable(true);
+			waiting.setVisibility(View.INVISIBLE);
+			
+			
+			
+			
+			
+			
+			
+			//v.setBackgroundColor(Color.BLUE);
+//			ArrayList<HashMap<String, Object>> jSonInfo = processQuery(query
+//					.getText().toString(), URL);
+//			ListItem listview_data[] = new ListItem[jSonInfo.size()];
+//			for (int i = 0; i < jSonInfo.size(); i++) {
+//				listview_data[i] = new ListItem(R.drawable.ic_launcher,
+//						(String) jSonInfo.get(i).get("title"),
+//						(String) jSonInfo.get(i).get("image1"));
+//
+//			}
+//
+//			MainListAdapter adapter = new MainListAdapter(this,
+//					R.layout.list_item, listview_data);
+//			listView1.setAdapter(adapter);
 
 		}
-//		else if (v == switchTo){
-////			Intent it = new Intent(v.getContext(), Activity2.class);
-////			startActivity(it);
-//			  
-//			   
-//		}
+		// else if (v == switchTo){
+		// // Intent it = new Intent(v.getContext(), Activity2.class);
+		// // startActivity(it);
+		//
+		//
+		// }
 	}
 
 	private Bitmap loadImageByURL(String imageFileURL) {
