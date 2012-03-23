@@ -101,18 +101,17 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 
 		listView1.setOnItemClickListener(new MyListViewListener());
 
+		
 		View.OnClickListener buttonhandler =new View.OnClickListener() {
-			
 			public void onClick(View v) {
-		    	   Log.d("ks","enter onClick");
+//		    	   Log.d("km-main","enter onClick");
 				   switch(v.getId()) { 
 				   // Now, which button did they press, and take me to that class/activity
-				       case R.id.buttoncats:    //<<---- notice end line with colon, not a semicolon
-				    	   Log.d("ks","enter button");
+				       case R.id.buttoncats:    
+//				    	   Log.d("km-main","enter button");
 				    	   Intent gotoCategory = new Intent(AIGProjectActivity.this,
 									CategoryActivity.class);
-				    	   startActivity(gotoCategory);
-				    	   
+				    	   startActivity(gotoCategory);				    	   
 				    	   
 				       break;
 				   }				
@@ -120,6 +119,7 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 			}
 		};
 		
+		// bind listener to button
 		Button catb = (Button) findViewById(R.id.buttoncats);
 		catb.setOnClickListener(buttonhandler);
 
@@ -152,8 +152,8 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		Runnable r = new Runnable() {
 			public void run() {
 				String URL = "http://app-inventor-gallery.appspot.com/rpc?tag=search:";
-				ArrayList<HashMap<String, Object>> jSonInfo = processQuery(query
-						.getText().toString(), URL);
+				ArrayList<HashMap<String, Object>> jSonInfo = retrieveJSONArray(URL, query
+						.getText().toString());
 				ListItem listview_data[] = new ListItem[jSonInfo.size()];
 				for (int i = 0; i < jSonInfo.size(); i++) {
 					listview_data[i] = new ListItem(R.drawable.ic_launcher,
@@ -287,33 +287,72 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		return null;
 	}
 
-	private ArrayList<HashMap<String, Object>> processQuery(String query,
-			String URL) {
-		String s = UrlReader.search(query, URL);
-
+	
+	public static ArrayList<HashMap<String, Object>> retrieveJSONArray(String URL, String query) {
+		String s;
+		JSONArray results;
+		
+		if (query.equals("")) {	// it's processing a regular JSON request
+			Log.d("MAIN","HELLO GENERALGET");
+			s = UrlReader.generalGet(URL);
+		}	else	{	// it's processing an actual search query
+			s = UrlReader.search(query, URL);
+		}
+			
 		if (s == null) {
-
 			return null;
 		}
-		JSONArray results;
 		try {
 			JSONObject o = new JSONObject(s);
-
 			results = (JSONArray) o.get("result");
+			Log.d("MAIN",String.valueOf(results.length()));
+			
+			if (query.equals("")) {	// it's processing a regular JSON request
+				return parseArrayResult(results);
+			}	else	{	// it's processing an actual search query
+				return parseSearchResult(results);
+			}
+					
 
-			return ParseResult(results);
-
-			// result.setText(formatResult(results).toString());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 		return null;
 
 	}
 
-	private ArrayList<HashMap<String, Object>> ParseResult(JSONArray results) {
+	private static ArrayList<HashMap<String, Object>> parseArrayResult(JSONArray results) {
+
+		StringBuffer sb = new StringBuffer();
+		ArrayList<HashMap<String, Object>> jSonInfo = new ArrayList<HashMap<String, Object>>();
+
+		Log.d("MAIN", "ARRAY ### ");
+		
+		HashMap<String, Object> newEle;
+		String s;
+		try {
+			for (int i = 0; i < results.length(); i++) {
+				s = results.getString(i);
+				newEle = new HashMap<String, Object>();
+				newEle.put(s,null);
+				Log.d("MAIN", "newele ### "+newEle.toString());
+				jSonInfo.add(newEle);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Log.d("MAIN", "ARRAY FAILED");
+			sb.append("***************************************");
+		}
+
+		return jSonInfo;
+	
+	}
+	
+	
+	
+	private static ArrayList<HashMap<String, Object>> parseSearchResult(JSONArray results) {
 
 		StringBuffer sb = new StringBuffer();
 
