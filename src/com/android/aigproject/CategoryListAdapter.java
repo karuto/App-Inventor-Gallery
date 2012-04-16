@@ -55,7 +55,7 @@ public class CategoryListAdapter extends ArrayAdapter<ListItem>{
             
             holder = new ListItemHolder();
             
-            ImageView image = (ImageView)row.findViewById(R.id.imgIcon);
+            ImageView image = (ImageView)row.findViewById(R.id.thumbnail);
 //            image.setImageBitmap(loadImageByURL(holder.imageFileURL));
             holder.imgIcon = image;
             holder.txtTitle = (TextView)row.findViewById(R.id.txtTitle);

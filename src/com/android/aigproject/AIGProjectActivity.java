@@ -20,6 +20,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.GradientDrawable.Orientation;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +45,7 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 	Button switchTo;
 	ImageView waiting;
 
-	private ListView listView1;
+	private ListView mainListView;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -54,35 +56,12 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		search = (Button) findViewById(R.id.button1);
 		search.setOnClickListener(this);
 		waiting = (ImageView) findViewById(R.id.waiting);
-		waiting.setVisibility(View.INVISIBLE); 
+		waiting.setVisibility(View.GONE); 
 
 
 		query = (EditText) findViewById(R.id.editText1);
 		result = (TextView) findViewById(R.id.textView1);
 
-		// ListItem listview_data[] = new ListItem[20];
-		// String imageFileURL =
-		// "http://lh6.ggpht.com/JL2goqwVeu8ds9vGYTUPPcw4pF93TEgAnt0YG6eAaxzSE8W2sLa6cmw5bFoxNcgTPPCgJZ6SQWZE0dAj9Fo6trLft9S8pWOdPQ=s100";
-		//
-		// for (int i = 0; i < 20; i++) {
-		// String text = "API Picture " + i;
-		// listview_data[i] = new ListItem(R.drawable.ic_launcher, text,
-		// imageFileURL);
-		// }
-
-		// switchTo = (Button) findViewById(R.id.button2);
-		// switchTo.setOnClickListener(this);
-
-		// ListItem listview_data[] = new ListItem[]
-		// {
-		// new ListItem(R.drawable.ic_launcher, "S1"),
-		// new ListItem(R.drawable.ic_launcher, "S2"),
-		// new ListItem(R.drawable.ic_launcher, "S3"),
-		// new ListItem(R.drawable.ic_launcher, "S4"),
-		// new ListItem(R.drawable.ic_launcher, "S5"),
-		// new ListItem(R.drawable.ic_launcher, "S6"),
-		// new ListItem(R.drawable.ic_launcher, "S4")
-		// };
 
 		// Defines the layout of each row in ListView.
 		ListItem listview_data2[] = new ListItem[0]; /*
@@ -92,15 +71,18 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		MainListAdapter adapter = new MainListAdapter(this, R.layout.list_item,
 				listview_data2);
 
-		listView1 = (ListView) findViewById(R.id.listView1);
+		mainListView = (ListView) findViewById(R.id.listView1);
 
 		View header = (View) getLayoutInflater().inflate(R.layout.list_header,
 				null);
-		listView1.addHeaderView(header);
-		listView1.setAdapter(adapter);
+		mainListView.addHeaderView(header);
+		mainListView.setAdapter(adapter);
 
-		listView1.setOnItemClickListener(new MyListViewListener());
+		mainListView.setOnItemClickListener(new MyListViewListener());
 
+		int[] colors = {0, 0xFFBBBBBB, 0}; // red for the example
+		mainListView.setDivider(new GradientDrawable(Orientation.RIGHT_LEFT, colors));
+		mainListView.setDividerHeight(2);
 		
 		View.OnClickListener buttonhandler =new View.OnClickListener() {
 			public void onClick(View v) {
@@ -156,15 +138,17 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 						.getText().toString());
 				ListItem listview_data[] = new ListItem[jSonInfo.size()];
 				for (int i = 0; i < jSonInfo.size(); i++) {
-					listview_data[i] = new ListItem(R.drawable.ic_launcher,
-							(String) jSonInfo.get(i).get("title"),
-							(String) jSonInfo.get(i).get("image1"));
-
-				}
+					listview_data[i] = new ListItem(R.drawable.ic_launcher,	// icon
+						(String) jSonInfo.get(i).get("title"),			// title
+						(String) jSonInfo.get(i).get("image1"),		// imageFileURL
+						(String) jSonInfo.get(i).get("displayName"),		// author
+						(String) jSonInfo.get(i).get("description"),		// imageFileURL
+						(Integer) jSonInfo.get(i).get("numLikes"));		// imageFileURL
+					}
 
 				MainListAdapter adapter = new MainListAdapter(context,
 						R.layout.list_item, listview_data);
-				listView1.setAdapter(adapter);
+				mainListView.setAdapter(adapter);
 			}
 		};
 		//r.run();
@@ -286,6 +270,8 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		}
 		return null;
 	}
+	
+	
 	public static ArrayList<HashMap<String, Object>> retrieveQueryArray(String URL) {
 		String s;
 		JSONArray results;
@@ -378,15 +364,12 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 			for (int i = 0; i < results.length(); i++) {
 				JSONObject singleLine = results.getJSONObject(i);
 
-				// System.out.println(singleLine.get("title"));
-				// System.out.println(singleLine.get("description"));
-				// System.out.println(singleLine.get("image1"));
-				// System.out.println(singleLine.get("sourceFileName"));
-				// System.out.println("-----------------");
 				newEle = new HashMap<String, Object>();
 				newEle.put("title", singleLine.get("title"));
 				newEle.put("description", singleLine.get("description"));
 				newEle.put("image1", singleLine.get("image1"));
+				newEle.put("displayName", singleLine.get("displayName"));
+				newEle.put("numLikes", singleLine.get("numLikes"));
 				newEle.put("sourceFileName", singleLine.get("sourceFileName"));
 
 				jSonInfo.add(newEle);

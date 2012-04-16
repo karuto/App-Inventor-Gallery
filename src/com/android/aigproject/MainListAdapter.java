@@ -55,10 +55,11 @@ public class MainListAdapter extends ArrayAdapter<ListItem>{
             
             holder = new ListItemHolder();
             
-            ImageView image = (ImageView)row.findViewById(R.id.imgIcon);
-//            image.setImageBitmap(loadImageByURL(holder.imageFileURL));
-            holder.imgIcon = image;
+            ImageView image = (ImageView)row.findViewById(R.id.thumbnail);
+            holder.thumbnail = image;
             holder.txtTitle = (TextView)row.findViewById(R.id.txtTitle);
+            holder.txtAuthor = (TextView)row.findViewById(R.id.txtAuthor);
+            holder.txtDesc = (TextView)row.findViewById(R.id.txtDesc);
             
             row.setTag(holder);
         }
@@ -70,17 +71,22 @@ public class MainListAdapter extends ArrayAdapter<ListItem>{
     	
         ListItem source_item = data[position];
         holder.txtTitle.setText(source_item.title);
+        holder.txtAuthor.setText(source_item.author);
+        holder.txtDesc.setText(source_item.desc);
 //        holder.imgIcon.setImageResource(source_item.icon);
-        holder.imgIcon.setImageBitmap(loadImageByURL(source_item.imageFileURL));
+        holder.thumbnail.setImageBitmap(loadImageByURL(source_item.imageFileURL));
     	return row;
     }
     
     /* Created temporarily for holding data into ListItem.
      * */
     static class ListItemHolder {
-    	ImageView imgIcon;
-    	TextView txtTitle;
-    	String imageFileURL;
+    	ImageView thumbnail;
+        TextView txtTitle;
+        String imageFileURL;
+        TextView txtAuthor;
+        TextView txtDesc;
+        TextView txtLikes;
     }
     
     private Bitmap loadImageByURL(String imageFileURL) {
