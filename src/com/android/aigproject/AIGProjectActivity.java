@@ -211,13 +211,15 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 				
 				ListItem listview_data[] = new ListItem[jSonInfo.size()];
 				for (int i = 0; i < jSonInfo.size(); i++) {
-					listview_data[i] = new ListItem(R.drawable.ic_launcher,	// icon
-							(String) jSonInfo.get(i).get("title"),			// title
-							(String) jSonInfo.get(i).get("image1"),		// imageFileURL
-							(String) jSonInfo.get(i).get("displayName"),		// author
-							(String) jSonInfo.get(i).get("description"),		// imageFileURL
-							(Integer) jSonInfo.get(i).get("numLikes"));		// imageFileURL
-
+					listview_data[i] = new ListItem(R.drawable.ic_launcher,	// dummy icon
+							(String) jSonInfo.get(i).get("title"),
+							(String) jSonInfo.get(i).get("image1"),	// imageFileURL, thumb
+							(String) jSonInfo.get(i).get("displayName"),	// author
+							(String) jSonInfo.get(i).get("description"),
+							(Integer) jSonInfo.get(i).get("numLikes"),
+							(Integer) jSonInfo.get(i).get("numViewed"),
+							(Integer) jSonInfo.get(i).get("numDownloads"),
+							(Integer) jSonInfo.get(i).get("numComments"));		
 				}
 
 				MainListAdapter adapter = new MainListAdapter(context,
@@ -238,19 +240,23 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			// TODO Auto-generated method stub
 
 			Intent nextScreen = new Intent(getApplicationContext(),
-					SecondScreenActivity.class);
+					ItemDetailActivity.class);
 
 			// Sending data to another Activity
-
 			ListItem curItem = (ListItem) (parent.getAdapter()
 					.getItem(position));
 
-			// Log.e("n", inputName.getText()+"."+ inputEmail.getText());
 			nextScreen.putExtra("name", curItem.title);
 			nextScreen.putExtra("imageURL", curItem.imageFileURL);
+			nextScreen.putExtra("author", curItem.author);
+			nextScreen.putExtra("desc", curItem.desc);
+			nextScreen.putExtra("numLikes", curItem.numLikes);
+			nextScreen.putExtra("numViewed", curItem.numViewed);
+			nextScreen.putExtra("numDownloads", curItem.numDownloads);
+			nextScreen.putExtra("numComments", curItem.numComments);
+			
 			Toast.makeText(AIGProjectActivity.this,
 					"position of " + curItem.title, Toast.LENGTH_SHORT).show();
 
