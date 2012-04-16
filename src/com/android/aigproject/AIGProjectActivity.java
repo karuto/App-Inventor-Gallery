@@ -42,10 +42,21 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 	Button search;
 	TextView result;
 	EditText query;
+	EditText title;
+	EditText description;
+	EditText tag;
+	EditText authorId;
+	
 	Button switchTo;
 	ImageView waiting;
 
 	private ListView mainListView;
+	
+	
+	String[] queries = new String[4]; /* title, description, tag,  AuthorId*/
+	EditText[] editTextList = new EditText[4];
+	URLFactory.Type[] types = new URLFactory.Type[4];
+	
 
 	/** Called when the activity is first created. */
 	@Override
@@ -56,11 +67,29 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		search = (Button) findViewById(R.id.button1);
 		search.setOnClickListener(this);
 		waiting = (ImageView) findViewById(R.id.waiting);
-		waiting.setVisibility(View.GONE); 
+		waiting.setVisibility(View.INVISIBLE); 
 
 
 		query = (EditText) findViewById(R.id.editText1);
+		title = (EditText) findViewById(R.id.editTextTitle);
+		description = (EditText) findViewById(R.id.editDescrption);
+		tag = (EditText) findViewById(R.id.editTag);
+		authorId = (EditText) findViewById(R.id.editTextAuthorID);
+		
+		editTextList[0] = title;
+		editTextList[1] = description;
+		editTextList[2] = tag;
+		editTextList[3] = authorId;
+		
+		types[0] = URLFactory.Type.TITLE;
+		types[1] = URLFactory.Type.DESCRIPTION;
+		types[2] = URLFactory.Type.TAG;
+		types[3] = URLFactory.Type.AUTHORID;
+		
+		
+		
 		result = (TextView) findViewById(R.id.textView1);
+
 
 
 		// Defines the layout of each row in ListView.
@@ -109,12 +138,18 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		
 	}
 
-	private void createNewThread(final Context context) {
+	private void createAsyncThread(final Context context) {
 
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
 				try {
-					requestSearchingData(context);
+					boolean success = grabsQueries();
+					
+					if(success){
+						requestSearchingData(context);
+					}
+					
+					
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -127,24 +162,63 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		thread.start();
 
 	}
+	
+	
+	private boolean grabsQueries(){
+		
+		boolean success = false;
+		
+		//if searchAll
+		if(query.getText() != null && query.getText().toString().trim().length() != 0){
+			for(int i = 0; i < queries.length; i++){
+				queries[i] = query.getText().toString().trim();
+			}
+			success = true;
+		}
+		
+		//else if searchSpecific
+		else{			
+			for(int i = 0; i < queries.length; i++){
+				if(editTextList[i].getText() != null && editTextList[i].getText().toString().trim().length() != 0){
+					queries[i] = title.getText().toString().trim();
+					success = true;
+				}else{
+					queries[i] = null;
+				}				
+			}
+		}
+		return success;
+	}
+	
 
 	public void requestSearchingData(final Context context) throws MalformedURLException,
 			IOException {
 
 		Runnable r = new Runnable() {
 			public void run() {
-				String URL = "http://app-inventor-gallery.appspot.com/rpc?tag=search:";
-				ArrayList<HashMap<String, Object>> jSonInfo = retrieveQueryArray(URL, query
-						.getText().toString());
+				ArrayList<HashMap<String, Object>> jSonInfo = new ArrayList<HashMap<String, Object>>();
+				ArrayList<HashMap<String, Object>> tmp;
+				for(int i = 0; i < queries.length; i++){
+					if(queries[i] != null){
+						
+						String URL = URLFactory.generate(types[i], queries[i]);
+						tmp = JsonGrabber.retrieveQueryArray(URL);
+						if(tmp != null){
+							jSonInfo.addAll(tmp);
+						}						
+					}
+				}
+				
 				ListItem listview_data[] = new ListItem[jSonInfo.size()];
 				for (int i = 0; i < jSonInfo.size(); i++) {
 					listview_data[i] = new ListItem(R.drawable.ic_launcher,	// icon
-						(String) jSonInfo.get(i).get("title"),			// title
-						(String) jSonInfo.get(i).get("image1"),		// imageFileURL
-						(String) jSonInfo.get(i).get("displayName"),		// author
-						(String) jSonInfo.get(i).get("description"),		// imageFileURL
-						(Integer) jSonInfo.get(i).get("numLikes"));		// imageFileURL
-					}
+							(String) jSonInfo.get(i).get("title"),			// title
+							(String) jSonInfo.get(i).get("image1"),		// imageFileURL
+							(String) jSonInfo.get(i).get("displayName"),		// author
+							(String) jSonInfo.get(i).get("description"),		// imageFileURL
+							(Integer) jSonInfo.get(i).get("numLikes"));		// imageFileURL
+
+				}
 
 				MainListAdapter adapter = new MainListAdapter(context,
 						R.layout.list_item, listview_data);
@@ -159,14 +233,6 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 
 	}
 
-	
-
-
-	
-	
-	
-	
-	
 	class MyListViewListener implements OnItemClickListener {
 		
 		@Override
@@ -197,9 +263,7 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		String URL = "http://app-inventor-gallery.appspot.com/rpc?tag=search:";
-
+		
 		if (v == search) { 
 //			visible 0 Visible on screen; the default value.  
 //			invisible 1 Not displayed, but taken into account during layout (space is left for it).  
@@ -211,177 +275,16 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 			//v.setBackgroundColor(Color.RED);
 			v.setClickable(false);
 			waiting.setVisibility(View.VISIBLE);
-			createNewThread(this);
+			createAsyncThread(this);
 			v.setClickable(true);
 			waiting.setVisibility(View.INVISIBLE);
 			
 			
-			
-			
-			
-			
-			
-			//v.setBackgroundColor(Color.BLUE);
-//			ArrayList<HashMap<String, Object>> jSonInfo = processQuery(query
-//					.getText().toString(), URL);
-//			ListItem listview_data[] = new ListItem[jSonInfo.size()];
-//			for (int i = 0; i < jSonInfo.size(); i++) {
-//				listview_data[i] = new ListItem(R.drawable.ic_launcher,
-//						(String) jSonInfo.get(i).get("title"),
-//						(String) jSonInfo.get(i).get("image1"));
-//
-//			}
-//
-//			MainListAdapter adapter = new MainListAdapter(this,
-//					R.layout.list_item, listview_data);
-//			listView1.setAdapter(adapter);
+
 
 		}
-		// else if (v == switchTo){
-		// // Intent it = new Intent(v.getContext(), Activity2.class);
-		// // startActivity(it);
-		//
-		//
-		// }
+
 	}
 
-	private Bitmap loadImageByURL(String imageFileURL) {
-		try {
-			URL url = new URL(imageFileURL);
-			URLConnection conn = url.openConnection();
-			HttpURLConnection httpConn = (HttpURLConnection) conn;
-			httpConn.setRequestMethod("GET");
-			httpConn.connect();
-			if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				InputStream inputStream = httpConn.getInputStream();
-				Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-				inputStream.close();
-				return bitmap;
-			} else {
-				// return null;
-			}
-
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	
-	public static ArrayList<HashMap<String, Object>> retrieveQueryArray(String URL) {
-		String s;
-		JSONArray results;
-		s = UrlReader.generalGet(URL);
-		if (s == null) {
-			return null;
-		}
-		try {
-			JSONObject o = new JSONObject(s);
-			results = (JSONArray) o.get("result");
-			Log.d("MAIN",String.valueOf(results.length()));
-			return parseArrayResult(results);
-			
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
-
-	
-	
-	}
-	
-	public static ArrayList<HashMap<String, Object>> retrieveQueryArray(String URL, String query) {
-		String s;
-		JSONArray results;
-		s = UrlReader.search(query, URL);			
-		if (s == null) {
-			return null;
-		}
-		try {
-			JSONObject o = new JSONObject(s);
-			results = (JSONArray) o.get("result");
-			Log.d("MAIN",String.valueOf(results.length()));
-			return parseSearchResult(results);					
-
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-		return null;
-
-	}
-	
-	/*
-	 * Returns an arraylist with String as keys and no objects. 
-	 * ONLY USED FOR TRAVERSING CATEGORY. (as of now, 2012/03/22)
-	 */
-	private static ArrayList<HashMap<String, Object>> parseArrayResult(JSONArray results) {
-
-		StringBuffer sb = new StringBuffer();
-		ArrayList<HashMap<String, Object>> jSonInfo = new ArrayList<HashMap<String, Object>>();
-
-		Log.d("MAIN", "ARRAY ### ");
-		
-		HashMap<String, Object> newEle;
-		String s;
-		try {
-			for (int i = 0; i < results.length(); i++) {
-				s = results.getString(i);
-				newEle = new HashMap<String, Object>();
-				newEle.put(s,null);
-				Log.d("MAIN", "newele ### "+newEle.toString());
-				jSonInfo.add(newEle);
-			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			Log.d("MAIN", "ARRAY FAILED");
-			sb.append("***************************************");
-		}
-
-		return jSonInfo;
-	
-	}
-	
-	
-	/*
-	 * Returns an arraylist with JSON Objects as values, used for general browsing
-	 * like searching, viewing a Apps-list, etc...
-	 */
-	private static ArrayList<HashMap<String, Object>> parseSearchResult(JSONArray results) {
-
-		StringBuffer sb = new StringBuffer();
-
-		ArrayList<HashMap<String, Object>> jSonInfo = new ArrayList<HashMap<String, Object>>();
-
-		HashMap<String, Object> newEle;
-		try {
-			for (int i = 0; i < results.length(); i++) {
-				JSONObject singleLine = results.getJSONObject(i);
-
-				newEle = new HashMap<String, Object>();
-				newEle.put("title", singleLine.get("title"));
-				newEle.put("description", singleLine.get("description"));
-				newEle.put("image1", singleLine.get("image1"));
-				newEle.put("displayName", singleLine.get("displayName"));
-				newEle.put("numLikes", singleLine.get("numLikes"));
-				newEle.put("sourceFileName", singleLine.get("sourceFileName"));
-
-				jSonInfo.add(newEle);
-
-			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			sb.append("***************************************");
-		}
-
-		return jSonInfo;
-
-	}
 
 }

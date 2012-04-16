@@ -49,16 +49,16 @@ public class UrlReader {
 	}
 	
 
-	public static String search(String tagValue, String URL) {
+	public static String search(String URL) {
 
 		//String URL = "http://app-inventor-gallery.appspot.com/rpc?tag=search:";
 
 		String html = null;
 
-		String urlTotal = URL + tagValue;
+		
 
 		try {
-			html = UrlReader.read(urlTotal);
+			html = UrlReader.read(URL);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

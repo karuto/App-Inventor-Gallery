@@ -45,6 +45,26 @@
         android:layout_height="wrap_content"
         android:text="Switch" />
 
+    <EditText
+        android:id="@+id/editTextTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/editDescrption"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/editTag"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/editTextAuthorID"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="fill_parent"

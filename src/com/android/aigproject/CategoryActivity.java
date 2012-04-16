@@ -36,7 +36,7 @@ public class CategoryActivity extends Activity{
 		Log.d("CATS","###########################");
 		
 		ArrayList<HashMap<String, Object>> catsArray = new ArrayList<HashMap<String, Object>>();
-		catsArray = AIGProjectActivity.retrieveQueryArray(source);
+		catsArray = JsonGrabber.retrieveQueryArray(source);
 		
 		String categories[] = new String[20];
 		int counter = 0;
