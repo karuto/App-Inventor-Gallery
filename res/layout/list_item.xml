@@ -9,14 +9,14 @@
     
      <ImageView android:id="@+id/thumbnail"
         android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_height="65dp"
         android:gravity="center_vertical"     
         android:background="#333333"        
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="5dp" 
-        android:layout_marginRight="5dp" />
+        android:layout_marginRight="10dp" />
 
      <RelativeLayout android:id="@+id/innergrid"   
 		android:layout_toRightOf="@+id/thumbnail" 

@@ -22,7 +22,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 	   	android:background="#333333"
-       	android:layout_marginBottom="15dp"
+       	android:layout_marginBottom="20dp"
 	   	android:orientation="horizontal">
 
 	    <TextView
@@ -37,28 +37,8 @@
 	        android:padding="10dp"
 	        android:singleLine="true"
 	        android:ellipsize="marquee"
-	        android:text="App Inventor Gallery"/>
+	        android:text="&lt; App Inventor Gallery"/>
 	     
-	    <RadioGroup
-	        android:id="@+id/radioGroup1"
-	        android:layout_alignParentRight="true"
-	       	android:layout_marginRight="15dp"
-	    	android:orientation="horizontal"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content" >
-	
-	        <RadioButton
-	            android:id="@+id/radioAll"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:checked="true"
-	            android:text="S " />	
-	        <RadioButton
-	            android:id="@+id/radioSpecific"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="S+" />
-	    </RadioGroup>
     	   	   
    </LinearLayout>
 
@@ -68,29 +48,26 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginLeft="15dp"
-		android:layout_marginRight="5dp"
-		android:background="@drawable/bgtile"
-  	/>    
+		android:layout_marginRight="10dp"
+		android:background="@drawable/bgtile" />    
 
-	<TextView android:id="@+id/beforeTitle"
-     	 android:layout_below="@+id/topbanner"
-	     android:layout_toRightOf="@+id/img"
-	     android:text="App Title"
-	     style="@style/label"/> 
       
      
 	<TextView android:id="@+id/txtTitle"    
    	     android:layout_below="@+id/topbanner"
-	     android:layout_toRightOf="@+id/beforeTitle"
+	     android:layout_toRightOf="@+id/img"
 	     android:layout_width="wrap_content"
 	     android:textStyle="bold"
+	     android:textSize="20dp"
+	     android:textColor="#222222"
 	     style="@style/midtext"/>
 	
 	<TextView android:id="@+id/beforeAuthor"
-	     android:layout_below="@+id/beforeTitle"
+	     android:layout_below="@+id/txtTitle"
 	     android:layout_toRightOf="@+id/img"
-	     android:text="Author"
-	     style="@style/label"/> 
+	     android:layout_width="wrap_content"
+	     android:text="By "
+	     style="@style/midtext"/> 
 	     
 	<TextView android:id="@+id/txtAuthor"
 	     android:layout_below="@+id/txtTitle"
@@ -121,6 +98,9 @@
 
   <TextView android:id="@+id/txtDesc"
      android:layout_width="fill_parent"
+  	 android:layout_marginRight="15dp"
+	 android:layout_marginLeft="15dp"
+	 android:layout_marginBottom="5dp"
      style="@style/midtext"/>
 
   
@@ -194,7 +174,8 @@
      android:layout_marginTop="15dp"
      android:layout_marginLeft="35dp"
      android:layout_marginRight="35dp"
-     android:text="Close"/>
+     android:layout_marginBottom="15dp"
+     android:text="Return to App List"/>
  
   </LinearLayout>
 </ScrollView>
