@@ -5,6 +5,7 @@ public class URLFactory {
 	
 	
 	public static enum Type {
+		ALL,
 	    TITLE,
 	    DESCRIPTION,
 	    TAG,
@@ -15,7 +16,9 @@ public class URLFactory {
 	
 	public static String generate(Type type, String query){
 		
-		if(type == Type.TITLE){
+		if(type == Type.ALL){
+			return getByAll(query);
+		}else if(type == Type.TITLE){
 			return getByTitle(query);
 		}else if(type == Type.DESCRIPTION){
 			return getByDescription(query);
@@ -29,6 +32,14 @@ public class URLFactory {
 		return query;
 		
 	}
+	
+	
+	private static String getByAll(String query){
+		String s = "http://app-inventor-gallery.appspot.com/rpc?tag=search:" + query;
+		return s;
+	}
+	
+	
 	
 	private static String getByTitle(String query){
 		

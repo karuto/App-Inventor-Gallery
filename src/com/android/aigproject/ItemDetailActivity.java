@@ -1,12 +1,24 @@
 package com.android.aigproject;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+import com.android.aigproject.R;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ItemDetailActivity extends Activity {
@@ -16,8 +28,10 @@ public class ItemDetailActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.itemdetail);
 
-        TextView txtName = (TextView) findViewById(R.id.txtName);
+        ImageView Image = (ImageView) findViewById(R.id.img);
+        TextView txtTitle = (TextView) findViewById(R.id.txtTitle);
         TextView txtAuthor = (TextView) findViewById(R.id.txtAuthor);
+        TextView txtDesc = (TextView) findViewById(R.id.txtDesc);
         TextView txtNumViewed = (TextView) findViewById(R.id.txtNumViewed);
         TextView txtNumLikes = (TextView) findViewById(R.id.txtNumLikes);
         TextView txtNumDownloads = (TextView) findViewById(R.id.txtNumDownloads);
@@ -26,22 +40,27 @@ public class ItemDetailActivity extends Activity {
  
         Intent i = getIntent();
         // Receiving the Data
-        String name = i.getStringExtra("name");
+        String imageURL = i.getStringExtra("imageURL");
+        String title = i.getStringExtra("title");
         String author = i.getStringExtra("author");
+        String desc = i.getStringExtra("desc");
         int numLikes = i.getIntExtra("numLikes", 0);
         int numViewed = i.getIntExtra("numViewed", 0);
         int numDownloads = i.getIntExtra("numDownloads", 0);
         int numComments = i.getIntExtra("numComments", 0);
 //        String imageURL = i.getStringExtra("imageURL");
-        Log.d("Second Screen", numLikes + " + " + numViewed);
+//        Log.d("Second Screen", numLikes + " + " + numViewed);
  
         // Displaying Received data
-        txtName.setText(name);
+        txtTitle.setText(title);
         txtAuthor.setText(author);
+        txtDesc.setText(desc);
         txtNumViewed.setText("" + numViewed);
         txtNumLikes.setText("" + numLikes);
         txtNumDownloads.setText("" + numDownloads);
         txtNumComments.setText("" + numComments);
+        
+        Image.setImageBitmap(loadImageByURL(imageURL));
  
         // Binding Click event to Button
         btnClose.setOnClickListener(new View.OnClickListener() {
@@ -53,4 +72,32 @@ public class ItemDetailActivity extends Activity {
         });
  
     }
+    
+    
+    public Bitmap loadImageByURL(String imageFileURL) {
+		try {
+			URL url = new URL(imageFileURL);
+			URLConnection conn = url.openConnection();
+			HttpURLConnection httpConn = (HttpURLConnection) conn;
+			httpConn.setRequestMethod("GET");
+			httpConn.connect();
+			if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				InputStream inputStream = httpConn.getInputStream();
+				Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+				inputStream.close();
+				return bitmap;
+			} else {
+				// return null;
+			}
+
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

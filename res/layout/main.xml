@@ -2,81 +2,211 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#FFFFFF"
+    android:background="@drawable/bgtile"
     android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/editText1"
+    
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="game" >
+    	android:background="#333333"
+    	android:orientation="horizontal">
+        
+	    <TextView
+	        android:id="@+id/globalHeader"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	       	android:textStyle="bold"
+	        android:textSize="18dp"
+	        android:textColor="#FFFFFF"
+        	android:layout_marginLeft="5dp"
+	        android:padding="10dp"
+	        android:singleLine="true"
+	        android:ellipsize="marquee"
+	        android:text="App Inventor Gallery"/>
+	     
+	    <RadioGroup
+	        android:id="@+id/radioGroup1"
+	        android:layout_alignParentRight="true"
+        	android:layout_marginRight="15dp"
+	    	android:orientation="horizontal"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" >
+	
+	        <RadioButton
+	            android:id="@+id/radioAll"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:checked="true"
+	            android:text="S " />	
+	        <RadioButton
+	            android:id="@+id/radioSpecific"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="S+" />
+	    </RadioGroup>
+    
+    </RelativeLayout>
 
-        <requestFocus />
-    </EditText>
+    <LinearLayout
+        android:id="@+id/SearchAllField"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical" >
 
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="game" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/SearchSpecificField"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical" >
+
+        <!-- Title -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4" >
+
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+	        	android:layout_weight="1"
+	        	android:textStyle="bold"
+		        android:textSize="18dp"
+		        android:textColor="#333333"
+                android:text="Title" />
+
+            <EditText
+                android:id="@+id/editTextTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+	        	android:layout_weight="3"
+                android:hint="e.g. games" />
+        </LinearLayout>
+		
+        <!-- Description: -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4" >
+
+            <TextView
+                android:id="@+id/textViewDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+	        	android:layout_weight="1"
+	        	android:textStyle="bold"
+		        android:textSize="18dp"
+		        android:textColor="#333333"
+                android:text="Detail" />
+
+            <EditText
+                android:id="@+id/editTextDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+	        	android:layout_weight="3"
+                android:hint="e.g. notepad app" />
+        </LinearLayout>
+		
+        <!-- Tag: -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" 
+            android:weightSum="4" >
+
+            <TextView
+                android:id="@+id/textViewTag"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+	        	android:layout_weight="1"
+	        	android:textStyle="bold"
+		        android:textSize="18dp"
+		        android:textColor="#333333"
+                android:hint="Tags" />
+
+            <EditText
+                android:id="@+id/editTextTag"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+	        	android:layout_weight="3"
+                android:hint="e.g. sports" />
+        </LinearLayout>
+        
+        
+        <!-- AuthorId: -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4" >
+
+            <TextView
+                android:id="@+id/textViewAuthorId"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+	        	android:layout_weight="1"
+	        	android:textStyle="bold"
+		        android:textSize="18dp"
+		        android:textColor="#333333"
+                android:text="Author" />
+
+            <EditText
+                android:id="@+id/editTextAuthorID"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+	        	android:layout_weight="3"
+                android:hint="e.g. 11494839985..."/>
+        </LinearLayout>
+        
+    </LinearLayout>
+    
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="1dp" >
 
         <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
+            android:id="@+id/buttonSearch"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp" 
             android:text="Search" />
-
         <ImageView
             android:id="@+id/waiting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/sync" />
-
     </LinearLayout>
-    
-    <Button
-        android:id="@+id/buttoncats"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Category" />
-    
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Switch" />
-
-    <EditText
-        android:id="@+id/editTextTitle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
-    <EditText
-        android:id="@+id/editDescrption"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
-    <EditText
-        android:id="@+id/editTag"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
-    <EditText
-        android:id="@+id/editTextAuthorID"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hello" />
+   
 
     <ListView
         android:id="@+id/listView1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:cacheColorHint="#00000000"
-	    android:divider="#FFCC00"
-	    android:dividerHeight="4px" />
+        android:divider="#E1E1E1"
+        android:dividerHeight="4px" />
 
 </LinearLayout>

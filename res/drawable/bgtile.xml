@@ -1,4 +1,4 @@
 <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-	android:src="@drawable/dia"
+	android:src="@drawable/hex"
 	android:tileMode="repeat"
 	android:dither="true" />
