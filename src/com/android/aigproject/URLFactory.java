@@ -5,6 +5,7 @@ public class URLFactory {
 	
 	
 	public static enum Type {
+		DEFAULT,
 		ALL,
 	    TITLE,
 	    DESCRIPTION,

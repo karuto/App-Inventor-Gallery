@@ -61,7 +61,8 @@ public class CategoryActivity extends Activity{
 		for (int i = 0; i < 20; i++) {
 			String text = "Category - " + categories[i];
 			listview_cats[i] = new ListItem(R.drawable.ic_launcher, text,
-					imageFileURL, null, null, 11, 22, 33, 44);
+					imageFileURL, null, null,
+					null, null, 11, 22, 33, 44);
 		}
 		
 		CategoryListAdapter adapter = new CategoryListAdapter(this, R.layout.list_item,	listview_cats);

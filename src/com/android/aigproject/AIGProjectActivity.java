@@ -273,6 +273,8 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 							(String) jSonInfo.get(i).get("image1"),	// imageFileURL, thumb
 							(String) jSonInfo.get(i).get("displayName"),	// author
 							(String) jSonInfo.get(i).get("description"),
+							(Long) jSonInfo.get(i).get("creationTime"),
+							(Long) jSonInfo.get(i).get("uploadTime"),
 							(Integer) jSonInfo.get(i).get("numLikes"),
 							(Integer) jSonInfo.get(i).get("numViewed"),
 							(Integer) jSonInfo.get(i).get("numDownloads"),
@@ -309,6 +311,8 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 			nextScreen.putExtra("imageURL", curItem.imageFileURL);
 			nextScreen.putExtra("author", curItem.author);
 			nextScreen.putExtra("desc", curItem.desc);
+			nextScreen.putExtra("creationTime", curItem.creationTime);
+			nextScreen.putExtra("uploadTime", curItem.uploadTime);
 			nextScreen.putExtra("numLikes", curItem.numLikes);
 			nextScreen.putExtra("numViewed", curItem.numViewed);
 			nextScreen.putExtra("numDownloads", curItem.numDownloads);
@@ -343,11 +347,6 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 
 			radioGroup.getCheckedRadioButtonId();
 
-//			if (radioGroup.getCheckedRadioButtonId() == R.id.SearchAllField) {
-//				createAsyncThread(this, SearchType.ALL);
-//			} else if (radioGroup.getCheckedRadioButtonId() == R.id.SearchSpecificField) {
-//				createAsyncThread(this, SearchType.SPECIFIC);
-//			}
 			createAsyncThread(this, SearchType.ALL);
 			v.setClickable(true);
 //			waiting.setVisibility(View.INVISIBLE);

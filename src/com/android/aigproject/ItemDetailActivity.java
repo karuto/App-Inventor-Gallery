@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Date;
 
 import com.android.aigproject.R;
 
@@ -44,6 +45,8 @@ public class ItemDetailActivity extends Activity {
         String title = i.getStringExtra("title");
         String author = i.getStringExtra("author");
         String desc = i.getStringExtra("desc");
+        Long creationTime = i.getLongExtra("creationTime", 1334704639);
+        Long uploadTime = i.getLongExtra("uploadTime", 1334704639);
         int numLikes = i.getIntExtra("numLikes", 0);
         int numViewed = i.getIntExtra("numViewed", 0);
         int numDownloads = i.getIntExtra("numDownloads", 0);
@@ -51,6 +54,13 @@ public class ItemDetailActivity extends Activity {
 //        String imageURL = i.getStringExtra("imageURL");
 //        Log.d("Second Screen", numLikes + " + " + numViewed);
  
+        Date creationDate = new Date( creationTime * 1000 );
+        creationDate.toString();
+        String date = new java.text.SimpleDateFormat
+        ("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (creationTime));
+        
+//        Log.d("Detail", creationTime.toString() + " | " + creationDate.toString());
+        
         // Displaying Received data
         txtTitle.setText(title);
         txtAuthor.setText(author);
