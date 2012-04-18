@@ -25,10 +25,8 @@ public class JsonGrabber {
 			JSONObject o = new JSONObject(s);
 			results = (JSONArray) o.get("result");
 			Log.d("MAIN",String.valueOf(results.length()));
-			return parseSearchResult(results);					
-
+			return parseSearchResult(results);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 		return null;
@@ -61,18 +59,11 @@ public class JsonGrabber {
 				// System.out.println(singleLine.get("sourceFileName"));
 				// System.out.println("-----------------");
 				newEle = new HashMap<String, Object>();
-				
-				
 				Iterator it = singleLine.keys();
 				while(it.hasNext()){
-					String key = it.next().toString();
-					
-					newEle.put(key, singleLine.get(key));
-									
-				}
-				
-				
-				
+					String key = it.next().toString();					
+					newEle.put(key, singleLine.get(key));									
+				}				
 //				newEle.put("title", singleLine.get("title"));
 //				newEle.put("description", singleLine.get("description"));
 //				newEle.put("image1", singleLine.get("image1"));
@@ -82,7 +73,6 @@ public class JsonGrabber {
 
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			sb.append("***************************************");
 		}
 

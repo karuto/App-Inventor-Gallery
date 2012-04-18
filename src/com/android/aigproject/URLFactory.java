@@ -17,7 +17,9 @@ public class URLFactory {
 	
 	public static String generate(Type type, String query){
 		
-		if(type == Type.ALL){
+		if(type == Type.DEFAULT) {
+			return getDefault();
+		}else if(type == Type.ALL){
 			return getByAll(query);
 		}else if(type == Type.TITLE){
 			return getByTitle(query);
@@ -32,6 +34,11 @@ public class URLFactory {
 		
 		return query;
 		
+	}
+	
+	private static String getDefault() {
+		String s = "http://app-inventor-gallery.appspot.com/rpc?tag=all:0:10";
+		return s;		
 	}
 	
 	

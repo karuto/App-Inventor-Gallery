@@ -50,22 +50,15 @@ public class UrlReader {
 	
 
 	public static String search(String URL) {
-
 		//String URL = "http://app-inventor-gallery.appspot.com/rpc?tag=search:";
-
 		String html = null;
-
-		
-
 		try {
 			html = UrlReader.read(URL);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return html;
-
 	}
 
 }

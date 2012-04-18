@@ -42,7 +42,7 @@ import android.widget.Toast;
 public class AIGProjectActivity extends Activity implements OnClickListener {
 
 	public static enum SearchType {
-		ALL, SPECIFIC
+		DEFAULT, ALL, SPECIFIC
 	}
 
 	Button search;
@@ -56,7 +56,7 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 	Button switchTo;
 	ImageView waiting;
 	
-	SearchType currentType = SearchType.ALL;   //change here
+	SearchType currentType = SearchType.DEFAULT;   //change here
 	
 
 	private ListView mainListView;
@@ -145,6 +145,8 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		mainListView.setDivider(new GradientDrawable(Orientation.RIGHT_LEFT,
 				colors));
 		mainListView.setDividerHeight(2);
+		
+		createAsyncThread(this, SearchType.DEFAULT);
 
 		
 		//change here
@@ -186,10 +188,8 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 					}
 
 				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -201,25 +201,20 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 	private boolean grabsQueries() {				//change here
 
 		boolean success = false;
-
 		// if searchAll
+
+		if(currentType == SearchType.DEFAULT){
+			success = true;
+		}
 		
-		if(currentType == SearchType.ALL){
+		else if(currentType == SearchType.ALL){
 			if (query.getText() != null
 					&& query.getText().toString().trim().length() != 0) {
-//				for (int i = 0; i < queries.length; i++) {
-//					queries[i] = query.getText().toString().trim();
-//				}
-				
 				querySingle = query.getText().toString().trim();
-				
 				success = true;
 			}
 		}
-		
-		
-		
-
+	
 		// else if searchSpecific
 		else if(currentType == SearchType.SPECIFIC){ // b = false;
 			for (int i = 0; i < queries.length; i++) {
@@ -242,8 +237,15 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 			public void run() {
 				ArrayList<HashMap<String, Object>> jSonInfo = new ArrayList<HashMap<String, Object>>();
 				ArrayList<HashMap<String, Object>> tmp;
-				
-				if(currentType == SearchType.ALL){ //Search ALL
+
+
+				if(currentType == SearchType.DEFAULT){
+					String URL = URLFactory.generate(URLFactory.Type.DEFAULT, null);
+					tmp = JsonGrabber.retrieveQueryArray(URL);
+					if (tmp != null) {
+						jSonInfo.addAll(tmp);
+					}
+				}else if(currentType == SearchType.ALL){ //Search ALL
 					String URL = URLFactory.generate(URLFactory.Type.ALL, querySingle);
 					tmp = JsonGrabber.retrieveQueryArray(URL);
 					if (tmp != null) {
@@ -254,7 +256,6 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 				}else if(currentType == SearchType.SPECIFIC){ //b == false   //Search Specific
 					for (int i = 0; i < queries.length; i++) {
 						if (queries[i] != null) {
-
 							String URL = URLFactory.generate(types[i], queries[i]);
 							tmp = JsonGrabber.retrieveQueryArray(URL);
 							if (tmp != null) {
