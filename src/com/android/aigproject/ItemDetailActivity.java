@@ -42,6 +42,7 @@ public class ItemDetailActivity extends Activity {
         Intent i = getIntent();
         // Receiving the Data
         String imageURL = i.getStringExtra("imageURL");
+//        imageURL = imageURL.substring(0, imageURL.length()-4);
         String title = i.getStringExtra("title");
         String author = i.getStringExtra("author");
         String desc = i.getStringExtra("desc");
@@ -72,11 +73,18 @@ public class ItemDetailActivity extends Activity {
         
         Image.setImageBitmap(loadImageByURL(imageURL));
  
-        // Binding Click event to Button
-        btnClose.setOnClickListener(new View.OnClickListener() {
- 
+        
+
+		TextView globalHeader = (TextView) findViewById(R.id.globalHeader);
+		globalHeader.setClickable(true);
+		globalHeader.setOnClickListener(new View.OnClickListener() { 
             public void onClick(View arg0) {
-                //Closing SecondScreen Activity
+                finish();
+            }
+        });
+        // Binding Click event to Button
+        btnClose.setOnClickListener(new View.OnClickListener() { 
+            public void onClick(View arg0) {
                 finish();
             }
         });

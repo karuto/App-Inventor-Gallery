@@ -45,8 +45,8 @@
 
     <ImageView android:id="@+id/img"
         android:layout_below="@+id/topbanner"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="150dp"
+		android:layout_height="200dp"
 		android:layout_marginLeft="15dp"
 		android:layout_marginRight="10dp"
 		android:background="@drawable/bgtile" />    
@@ -130,7 +130,7 @@
 		  <TextView android:id="@+id/txtNumLikes"
 		     android:layout_width="wrap_content"
 	     	 android:layout_toRightOf="@+id/beforeNumLikes"
-		     style="@style/midtext"/>
+		     style="@style/labeltext"/>
 	   
 	  <TextView android:id="@+id/beforeNumViewed"
 	     android:layout_below="@+id/beforeNumLikes"
@@ -141,7 +141,7 @@
 		     android:layout_width="wrap_content"
 		     android:layout_below="@+id/txtNumLikes"
 	     	 android:layout_toRightOf="@+id/beforeNumViewed"
-		     style="@style/midtext"/>
+		     style="@style/labeltext"/>
 	   
 	  <TextView android:id="@+id/beforeNumDownloads"
 	     android:layout_below="@+id/beforeNumViewed"
@@ -152,7 +152,7 @@
 		     android:layout_width="wrap_content"
 		     android:layout_below="@+id/txtNumViewed"
 	     	 android:layout_toRightOf="@+id/beforeNumDownloads"
-		     style="@style/midtext"/>
+		     style="@style/labeltext"/>
 	   
 	  <TextView android:id="@+id/beforeNumComments"
 	     android:layout_below="@+id/beforeNumDownloads"
@@ -163,7 +163,7 @@
 		     android:layout_width="wrap_content"
 		     android:layout_below="@+id/txtNumDownloads"
 	     	 android:layout_toRightOf="@+id/beforeNumComments"
-		     style="@style/midtext"/>
+		     style="@style/labeltext"/>
 	  
   </RelativeLayout>
   

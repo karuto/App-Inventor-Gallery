@@ -45,8 +45,9 @@ public final class R {
         public static final int img=0x7f070003;
         public static final int innergrid=0x7f070016;
         public static final int linearLayout1=0x7f070027;
-        public static final int listView1=0x7f07002a;
+        public static final int listView1=0x7f07002b;
         public static final int listViewCats=0x7f070000;
+        public static final int progressSearch=0x7f07002a;
         public static final int radioAll=0x7f07001a;
         public static final int radioGroup1=0x7f070019;
         public static final int radioSpecific=0x7f07001b;
@@ -75,7 +76,8 @@ public final class R {
         public static final int itemdetail=0x7f030002;
         public static final int list_header=0x7f030003;
         public static final int list_item=0x7f030004;
-        public static final int main=0x7f030005;
+        public static final int listfooter=0x7f030005;
+        public static final int main=0x7f030006;
     }
     public static final class string {
         public static final int app_name=0x7f050001;
@@ -83,9 +85,10 @@ public final class R {
     }
     public static final class style {
         public static final int band=0x7f060001;
-        public static final int detail=0x7f060003;
-        public static final int label=0x7f060002;
+        public static final int detail=0x7f060004;
+        public static final int label=0x7f060003;
+        public static final int labeltext=0x7f060002;
         public static final int midtext=0x7f060000;
-        public static final int smalltext=0x7f060004;
+        public static final int smalltext=0x7f060005;
     }
 }

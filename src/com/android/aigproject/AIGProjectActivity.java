@@ -7,11 +7,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -24,16 +26,20 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -56,26 +62,26 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 	Button switchTo;
 	ImageView waiting;
 	
-	SearchType currentType = SearchType.DEFAULT;   //change here
-	
+	SearchType currentType = SearchType.DEFAULT;   
 
+	boolean loadingMore = false;	// for dynamic list loading
+	MainListAdapter adapter;
 	private ListView mainListView;
+	ListItem listitem_holder[];
 
-	String querySingle = null;				//change here
-	
+
+	String querySingle = null;					
 	String[] queries = new String[4]; /* title, description, tag, AuthorId */
 	EditText[] editTextList = new EditText[4];
 	URLFactory.Type[] types = new URLFactory.Type[4];
 
-	/**
-	 * Tab Layout
-	 */
-	LinearLayout searchAll;							//change here
-	LinearLayout searchSpecific;					//change here
+	LinearLayout searchAll;							
+	LinearLayout searchSpecific;					
 
-	RadioGroup radioGroup;							//change here
-	RadioButton searchAllRadioButton;				//change here
-	RadioButton searchSpecificRadioButton;			//change here
+	RadioGroup radioGroup;							
+	RadioButton searchAllRadioButton;				
+	RadioButton searchSpecificRadioButton;	
+	ProgressBar progressBar;		
 
 	/** Called when the activity is first created. */
 	@Override
@@ -84,32 +90,30 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.main);
 
 		// search type
-		radioGroup = (RadioGroup) findViewById(R.id.radioGroup1);				//change here
-		radioGroup.setOnClickListener(this);				//change here
-		searchAllRadioButton = (RadioButton) findViewById(R.id.radioAll);				//change here
-		searchAllRadioButton.setOnClickListener(this);				//change here
-		searchSpecificRadioButton = (RadioButton) findViewById(R.id.radioSpecific);				//change here
-		searchSpecificRadioButton.setOnClickListener(this);				//change here
+		radioGroup = (RadioGroup) findViewById(R.id.radioGroup1);				
+		radioGroup.setOnClickListener(this);				
+		searchAllRadioButton = (RadioButton) findViewById(R.id.radioAll);				
+		searchAllRadioButton.setOnClickListener(this);				
+		searchSpecificRadioButton = (RadioButton) findViewById(R.id.radioSpecific);				
+		searchSpecificRadioButton.setOnClickListener(this);				
 
 		// search layout
-		searchAll = (LinearLayout) findViewById(R.id.SearchAllField);				//change here
-		searchSpecific = (LinearLayout) findViewById(R.id.SearchSpecificField);				//change here
+		searchAll = (LinearLayout) findViewById(R.id.SearchAllField);				
+		searchSpecific = (LinearLayout) findViewById(R.id.SearchSpecificField);				
 
-		searchAll.setVisibility(View.VISIBLE);				//change here
-		searchSpecific.setVisibility(View.GONE);				//change here
+		searchAll.setVisibility(View.VISIBLE);				
+		searchSpecific.setVisibility(View.GONE);				
 
-		search = (Button) findViewById(R.id.buttonSearch);				//change here
-		search.setOnClickListener(this);				//change here
-		waiting = (ImageView) findViewById(R.id.waiting);				//change here
-		waiting.setVisibility(View.INVISIBLE);				//change here
+		search = (Button) findViewById(R.id.buttonSearch);				
+		search.setOnClickListener(this);				
+		waiting = (ImageView) findViewById(R.id.waiting);				
+		waiting.setVisibility(View.INVISIBLE);				
 
 		query = (EditText) findViewById(R.id.editText1);
 		title = (EditText) findViewById(R.id.editTextTitle);
 		description = (EditText) findViewById(R.id.editTextDescription);
 		tag = (EditText) findViewById(R.id.editTextTag);
 		authorId = (EditText) findViewById(R.id.editTextAuthorID);
-		
-
 		
 		
 
@@ -129,7 +133,7 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 													 * begin with 0, so nothing
 													 * in there
 													 */
-		MainListAdapter adapter = new MainListAdapter(this, R.layout.list_item,
+		adapter = new MainListAdapter(this, R.layout.list_item,
 				listview_data2);
 
 		mainListView = (ListView) findViewById(R.id.listView1);
@@ -137,6 +141,10 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		View header = (View) getLayoutInflater().inflate(R.layout.list_header,
 				null);
 		mainListView.addHeaderView(header);
+		View footerView = ((LayoutInflater)this.getSystemService
+				(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.listfooter, null, false);
+		mainListView.addFooterView(footerView);
+		
 		mainListView.setAdapter(adapter);
 
 		mainListView.setOnItemClickListener(new MyListViewListener());
@@ -147,35 +155,91 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 		mainListView.setDividerHeight(2);
 		
 		createAsyncThread(this, SearchType.DEFAULT);
-
 		
-		//change here
-		//uncomment codes below
 		
-		// View.OnClickListener buttonhandler =new View.OnClickListener() {
-		// public void onClick(View v) {
-		// // Log.d("km-main","enter onClick");
-		// switch(v.getId()) {
-		// // Now, which button did they press, and take me to that
-		// class/activity
-		// case R.id.buttoncats:
-		// // Log.d("km-main","enter button");
-		// Intent gotoCategory = new Intent(AIGProjectActivity.this,
-		// CategoryActivity.class);
-		// startActivity(gotoCategory);
-		//
-		// break;
-		// }
-		//
-		// }
-		// };
-
-		// // bind listener to button
-		// Button catb = (Button) findViewById(R.id.buttoncats);
-		// catb.setOnClickListener(buttonhandler);
-
+		
+		mainListView.setOnScrollListener(new OnScrollListener(){
+			
+			//useless here, skip!
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {}
+			
+			//dumdumdum			
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				
+				//what is the bottom item that is visible
+				int lastInScreen = firstVisibleItem + visibleItemCount;
+				//is the bottom item visible & not loading more already ? Load more !
+				if((lastInScreen == totalItemCount) && !(loadingMore)){				
+					Log.d("Scroll", "HIHI");
+					Thread thread =  new Thread(null, loadMoreListItems);
+			        thread.start();
+				}
+			}
+		});
+		
+		Intent i = new Intent(this, MyService.class);
+		startService(i);
+		
+		
+		Log.e("MyService now", String.valueOf(MyService.getInstance()));
+		progressBar = (ProgressBar) findViewById(R.id.progressSearch);
+		progressBar.setVisibility(View.GONE);		
 	}
 
+	
+    //Runnable to load the items 
+    private Runnable loadMoreListItems = new Runnable() {			
+		@Override
+		public void run() {
+			//Set flag so we cant load new items 2 at the same time
+			loadingMore = true;
+			
+			//Reset the array that holds the new items
+			listitem_holder = new ListItem[50];
+	    	
+			//Simulate a delay, delete this on a production environment!
+	    	try { Thread.sleep(2000);
+			} catch (InterruptedException e) {}
+			
+			//Get 15 new listitems (fixed number hard-code for now)
+	    	for (int i = 0; i < 50; i++) {		
+	    		String text = "Reload - " + i;
+	    		listitem_holder[i] = new ListItem(R.drawable.ic_launcher, text,
+						null, "author", "Da da dadadada, da da dadadada, da dada da.",
+						null, null, 11, 22, 33, 44);				
+			}
+			
+			//Done! now continue on the UI thread
+	        runOnUiThread(returnRes);
+	        
+		}
+	};	
+	
+    
+	//Since we cant update our UI from a thread this Runnable takes care of that! 
+    private Runnable returnRes = new Runnable() {
+        @Override
+        public void run() {
+        	
+			//Loop thru the new items and add them to the adapter
+			if(listitem_holder != null && listitem_holder.length > 0){
+				adapter = new MainListAdapter(getApplicationContext(),
+						R.layout.list_item, listitem_holder);
+            }
+        	
+			//Tell to the adapter that changes have been made, this will cause the list to refresh
+            adapter.notifyDataSetChanged();
+			//Done loading more.
+            loadingMore = false;
+        }
+    };	
+	
+	
+	
+	
 	private void createAsyncThread(final Context context, final SearchType type) {
 
 		Thread thread = new Thread(new Runnable() {
@@ -198,7 +262,7 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 
 	}
 
-	private boolean grabsQueries() {				//change here
+	private boolean grabsQueries() {				
 
 		boolean success = false;
 		// if searchAll
@@ -212,6 +276,8 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 					&& query.getText().toString().trim().length() != 0) {
 				querySingle = query.getText().toString().trim();
 				success = true;
+			} else {
+				
 			}
 		}
 	
@@ -231,7 +297,7 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 	}
 
 	public void requestSearchingData(final Context context, SearchType type)
-			throws MalformedURLException, IOException {				//change here
+			throws MalformedURLException, IOException {				
 
 		Runnable r = new Runnable() {
 			public void run() {
@@ -332,7 +398,7 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 
-		if (v == search) {				//change here
+		if (v == search) {				
 			// visible 0 Visible on screen; the default value.
 			// invisible 1 Not displayed, but taken into account during layout
 			// (space is left for it).
@@ -348,31 +414,25 @@ public class AIGProjectActivity extends Activity implements OnClickListener {
 
 			radioGroup.getCheckedRadioButtonId();
 
+			querySingle = query.getText().toString().trim();
+			TextView header = (TextView) findViewById(R.id.txtHeader);
+			header.setText("Search results for "+querySingle);
+			
 			createAsyncThread(this, SearchType.ALL);
 			v.setClickable(true);
-//			waiting.setVisibility(View.INVISIBLE);
 
-		} else if (v == searchAllRadioButton) {				//change here
+		} else if (v == searchAllRadioButton) {				
 			query.setVisibility(View.VISIBLE);
 			searchAll.setVisibility(View.VISIBLE);
 			search.setVisibility(View.VISIBLE);
 			searchSpecific.setVisibility(View.GONE);
-
-//			query.setText("");
-//			title.setText("");
-//			description.setText("");
-//			tag.setText("");
-//			authorId.setText("");
 			
 			currentType = SearchType.ALL;
 
-		} else if (v == searchSpecificRadioButton) {				//change here
+		} else if (v == searchSpecificRadioButton) {				
 			searchAll.setVisibility(View.GONE);
 			searchSpecific.setVisibility(View.VISIBLE);
 			search.setVisibility(View.VISIBLE);
-
-
-
 			
 			currentType = SearchType.SPECIFIC;
 

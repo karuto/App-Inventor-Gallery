@@ -201,6 +201,12 @@
     </LinearLayout>
    
 
+    <ProgressBar
+        android:id="@+id/progressSearch"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <ListView
         android:id="@+id/listView1"
         android:layout_width="fill_parent"
