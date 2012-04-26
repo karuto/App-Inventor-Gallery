@@ -1,0 +1,14 @@
+
+
+.container {
+
+}
+.hero {
+	width: 100%;
+	height: 30rem;
+	background-color: #ce5333;
+}
+.gridbox {
+	width: 96rem;
+	margin: 0 auto;
+}
