@@ -169,10 +169,12 @@ Big up @necolas: nicolasgallagher.com/micro-clearfix-hack
 	$MAIN
 \*------------------------------------*/
 html{
+	font-size:62.5%; /* 10px base size */
+	line-height:1.5; 
 	overflow-y:scroll;
-	line-height:1.5; /* A safe and comfortable default for body copy at any size. */
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
 }
-
 
 
 
