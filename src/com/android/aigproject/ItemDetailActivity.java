@@ -7,7 +7,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import com.android.aigproject.R;
 
@@ -28,6 +30,12 @@ public class ItemDetailActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.itemdetail);
+        
+        
+        
+        
+        
+        
 
         ImageView Image = (ImageView) findViewById(R.id.img);
         TextView txtTitle = (TextView) findViewById(R.id.txtTitle);
@@ -40,18 +48,50 @@ public class ItemDetailActivity extends Activity {
         Button btnClose = (Button) findViewById(R.id.btnClose);
  
         Intent i = getIntent();
+ 
+//        // Receiving the Data
+//        String imageURL = i.getStringExtra("imageURL");
+////        imageURL = imageURL.substring(0, imageURL.length()-4);
+//        String title = i.getStringExtra("title");
+//        String author = i.getStringExtra("author");
+//        String desc = i.getStringExtra("desc");
+//        Long creationTime = i.getLongExtra("creationTime", 1334704639);
+//        Long uploadTime = i.getLongExtra("uploadTime", 1334704639);
+//        int numLikes = i.getIntExtra("numLikes", 0);
+//        int numViewed = i.getIntExtra("numViewed", 0);
+//        int numDownloads = i.getIntExtra("numDownloads", 0);
+//        int numComments = i.getIntExtra("numComments", 0);
+        
+        String url = URLFactory.generate(URLFactory.Type.UID, String.valueOf(i.getIntExtra("uid", 0)));
+        //String url = URLFactory.generate(URLFactory.Type.UID, String.valueOf(36001));
+        ArrayList<HashMap<String, Object>> tmp = JsonGrabber.retrieveQueryArrayByUID(url);
+        
+        
+        Log.d("uid1", tmp.toString());
+        Log.d("uid2", tmp.get(0).toString());
+        
         // Receiving the Data
-        String imageURL = i.getStringExtra("imageURL");
+        String imageURL = String.valueOf(tmp.get(0).get("image1"));
+        
+        if(tmp.get(0).get("image1") == null){
+        	Log.d("image1", "null");
+        }else{
+        	Log.d("image1", tmp.get(0).get("image1").toString());
+        }
+        
+        
 //        imageURL = imageURL.substring(0, imageURL.length()-4);
-        String title = i.getStringExtra("title");
-        String author = i.getStringExtra("author");
-        String desc = i.getStringExtra("desc");
+        String title = String.valueOf(tmp.get(0).get("title"));
+        String author = String.valueOf(tmp.get(0).get("displayName"));
+        String desc = String.valueOf(tmp.get(0).get("description"));
         Long creationTime = i.getLongExtra("creationTime", 1334704639);
         Long uploadTime = i.getLongExtra("uploadTime", 1334704639);
         int numLikes = i.getIntExtra("numLikes", 0);
         int numViewed = i.getIntExtra("numViewed", 0);
         int numDownloads = i.getIntExtra("numDownloads", 0);
         int numComments = i.getIntExtra("numComments", 0);
+        
+        
 //        String imageURL = i.getStringExtra("imageURL");
 //        Log.d("Second Screen", numLikes + " + " + numViewed);
  

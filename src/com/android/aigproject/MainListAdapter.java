@@ -92,6 +92,15 @@ public class MainListAdapter extends ArrayAdapter<ListItem>{
     private Bitmap loadImageByURL(String imageFileURL) {
 		try {
 			URL url = new URL(imageFileURL);
+			
+			if(!imageFileURL.endsWith("00")){
+				imageFileURL = imageFileURL + "100";
+				
+				Log.e("found one", "sdfd");
+				
+			}
+			
+			
 			URLConnection conn = url.openConnection();
 			HttpURLConnection httpConn = (HttpURLConnection) conn;
 			httpConn.setRequestMethod("GET");

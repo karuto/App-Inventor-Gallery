@@ -10,7 +10,8 @@ public class URLFactory {
 	    TITLE,
 	    DESCRIPTION,
 	    TAG,
-	    AUTHORID
+	    AUTHORID,
+	    UID
 	}
 	
 	
@@ -29,6 +30,8 @@ public class URLFactory {
 			return getByTag(query);
 		}else if(type == Type.AUTHORID){
 			return getByAuthorId(query);
+		}else if(type == Type.UID){
+			return getByUid(query);
 		}
 		
 		
@@ -83,6 +86,10 @@ public class URLFactory {
 		
 	}
 	
-	
+	private static String getByUid(String query){
+		String s = "http://app-inventor-gallery.appspot.com/rpc?tag=getinfo:" + query;
+		
+		return s;
+	}
 	
 }

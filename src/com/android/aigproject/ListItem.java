@@ -4,7 +4,7 @@ public class ListItem {
     public int icon;
     public String title, imageFileURL, author, desc;
     Long creationTime, uploadTime; 
-    public int numLikes, numViewed, numDownloads, numComments;
+    public int numLikes, numViewed, numDownloads, numComments, uid;
     
     
     public ListItem(){
@@ -14,7 +14,7 @@ public class ListItem {
     public ListItem(int icon, 
     		String title, String imageFileURL, String author, String desc, 
     		Long creationTime, Long uploadTime,
-    		int numLikes, int numViewed, int numDownloads, int numComments) {
+    		int numLikes, int numViewed, int numDownloads, int numComments, int uid) {
         super();
         this.icon = icon;
         this.title = title;
@@ -27,5 +27,6 @@ public class ListItem {
         this.numViewed = numViewed;
         this.numDownloads = numDownloads;
         this.numComments = numComments;
+        this.uid = uid;
     }
 }
