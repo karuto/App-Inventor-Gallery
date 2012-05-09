@@ -131,7 +131,7 @@
 		     android:layout_width="wrap_content"
 	     	 android:layout_toRightOf="@+id/beforeNumLikes"
 		     style="@style/labeltext"/>
-	   
+	     	   
 	  <TextView android:id="@+id/beforeNumViewed"
 	     android:layout_below="@+id/beforeNumLikes"
      	 android:text="Views"
