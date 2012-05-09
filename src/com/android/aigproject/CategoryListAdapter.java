@@ -36,14 +36,14 @@ public class CategoryListAdapter extends ArrayAdapter<ListItem>{
         this.data = data;
     }
 
-    /* This shit will be called for every item in the ListView,
+    /* This will be called for every item in the ListView,
      * to create views with their properties set as we want.
      * */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
     	View row = convertView;
     	
-    	/* This shit will be used to cache the ImageView and TextView
+    	/* This will be used to cache the ImageView and TextView
     	 *  so they can be reused for every row in the ListView
     	 */
     	ListItemHolder holder = null;
