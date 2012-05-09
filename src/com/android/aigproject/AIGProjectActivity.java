@@ -43,8 +43,9 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-   
-public class AIGProjectActivity extends SherlockActivity implements OnClickListener, ActionBar.OnNavigationListener {
+  
+public class AIGProjectActivity extends SherlockActivity 
+implements OnClickListener, ActionBar.OnNavigationListener {
 
 	public static enum SearchType {
 		DEFAULT, ALL, SPECIFIC
@@ -54,50 +55,42 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 		CREATE, APPEND, CLEAR
 	}
 
-	Button search;
-	TextView result;
-	EditText query;
-	EditText title;
-	EditText description;
-	EditText tag;
-	EditText authorId;
-
+	Button search, switchTo;
+	View headerView, footerView;
+	TextView result, listfooterEmpty;
+	ImageView waiting;
+	EditText query, title, description, tag, authorId;
+	RadioGroup radioGroup;
+	RadioButton searchAllRadioButton, searchSpecificRadioButton;
+	LinearLayout searchAll, searchSpecific;
+	ProgressBar progressBar;	
+	
 	int defaultStart = 0;
 	int defaultCount = 10;
 	int defaultIncrement = 10;
-
 	int allStart = 0;
 	int allCount = 10;
 	int allIncrement = 10;
 
-	View headerView;
-	View footerView;
-
-	TextView listfooterEmpty;
-
-	Button switchTo;
-	ImageView waiting;
 
 	SearchType currentType = SearchType.DEFAULT;
 
 	boolean loadingMore = false; // for dynamic list loading
 	MainListAdapter adapter;
-	private ListView mainListView;
+	ListView mainListView;
 	ArrayList<ListItem> listitem_holder = new ArrayList<ListItem>();
-	// ListItem listitem_holder[];
 
 	String querySingle = null;
 	String[] queries = new String[4]; /* title, description, tag, AuthorId */
 	EditText[] editTextList = new EditText[4];
 	URLFactory.Type[] types = new URLFactory.Type[4];
 
-	LinearLayout searchAll;
-	LinearLayout searchSpecific;
-
-	RadioGroup radioGroup;
-	RadioButton searchAllRadioButton;
-	RadioButton searchSpecificRadioButton;
-	ProgressBar progressBar;
+	
+	// For later usages in SubMenu's controller
+	private static final int SEARCH_STA = Menu.FIRST;  
+    private static final int SEARCH_TAG = Menu.FIRST + 1; 
+    private static final int SEARCH_AUT = Menu.FIRST + 2;  
+	
 
 	/** Called when the activity is first created. */
 	@Override
@@ -112,23 +105,16 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 			StrictMode.setThreadPolicy(policy);			
 		}
 		
-		// search type
-		radioGroup = (RadioGroup) findViewById(R.id.radioGroup1);
-		radioGroup.setOnClickListener(this);
-		searchAllRadioButton = (RadioButton) findViewById(R.id.radioAll);
-		searchAllRadioButton.setOnClickListener(this);
-		searchSpecificRadioButton = (RadioButton) findViewById(R.id.radioSpecific);
-		searchSpecificRadioButton.setOnClickListener(this);
-
 		// search layout
 		searchAll = (LinearLayout) findViewById(R.id.SearchAllField);
 		searchSpecific = (LinearLayout) findViewById(R.id.SearchSpecificField);
 
-		searchAll.setVisibility(View.VISIBLE);
+		searchAll.setVisibility(View.GONE);
 		searchSpecific.setVisibility(View.GONE);
 
 		search = (Button) findViewById(R.id.buttonSearch);
 		search.setOnClickListener(this);
+		search.setVisibility(View.GONE);
 		waiting = (ImageView) findViewById(R.id.waiting);
 		waiting.setVisibility(View.INVISIBLE);
 
@@ -171,14 +157,11 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 		footerView.setOnClickListener(this);
 
 		mainListView.addFooterView(footerView);
-
 		mainListView.setAdapter(adapter);
-
 		mainListView.setOnItemClickListener(new MyListViewListener());
 
 		int[] colors = { 0, 0xFFBBBBBB, 0 };
-		mainListView.setDivider(new GradientDrawable(Orientation.RIGHT_LEFT,
-				colors));
+		mainListView.setDivider(new GradientDrawable(Orientation.RIGHT_LEFT, colors));
 		mainListView.setDividerHeight(2);
 
 		createAsyncThread(this, SearchType.DEFAULT, ListOperation.CREATE);
@@ -210,20 +193,21 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 		// Intent i = new Intent(this, MyService.class);
 		// startService(i);
 
-		// Log.e("MyService now", String.valueOf(MyService.getInstance()));
 		progressBar = (ProgressBar) findViewById(R.id.progressSearch);
 		progressBar.setVisibility(View.GONE);
 
 		listfooterEmpty = (TextView) findViewById(R.id.empty);
-		
-        Context context = getSupportActionBar().getThemedContext();
-        ArrayAdapter<CharSequence> list = ArrayAdapter.createFromResource(context, R.array.locations, R.layout.sherlock_spinner_item);
-        list.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
 
-        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        getSupportActionBar().setListNavigationCallbacks(list, this);
-		
-		
+		// Spinners + Dropdown menus in ActionBar
+//        Context context = getSupportActionBar().getThemedContext();
+//        ArrayAdapter<CharSequence> list = ArrayAdapter.createFromResource(context, R.array.locations, R.layout.sherlock_spinner_item);
+//        list.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
+//
+//        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+//        getSupportActionBar().setListNavigationCallbacks(list, this);
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 	}
 
@@ -312,39 +296,6 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 			Log.d("haha", "after");
 		}
 
-		// } catch (MalformedURLException e) {
-		// e.printStackTrace();
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-
-		//
-		// Thread thread = new Thread(new Runnable() {
-		// public void run() {
-		// Runnable r = new Runnable() {
-		// public void run() {
-		// try {
-		// boolean success = grabsQueries();
-		//
-		// if (success) {
-		// Log.d("haha", "before");
-		// requestSearchingData(context, type);
-		// Log.d("haha", "after");
-		// }
-		//
-		// } catch (MalformedURLException e) {
-		// e.printStackTrace();
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		// }
-		// };
-		//
-		// runOnUiThread(r);
-		// }
-		// });
-		// thread.start();
-
 	}
 
 	private boolean grabsQueries() {
@@ -426,12 +377,7 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 	@Override
 	public void onClick(View v) {
 		if (v == search) {
-			// visible 0 Visible on screen; the default value.
-			// invisible 1 Not displayed, but taken into account during layout
-			// (space is left for it).
-			// gone 2 Completely hidden, as if the view had not been added.
 
-			// v.setBackgroundColor(Color.RED);
 			v.setClickable(false);
 
 			allCount = 10;
@@ -445,7 +391,6 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 			query.setVisibility(View.GONE);
 			search.setVisibility(View.GONE);
 
-			radioGroup.getCheckedRadioButtonId();
 
 			querySingle = query.getText().toString().trim();
 			TextView header = (TextView) findViewById(R.id.txtHeader);
@@ -456,21 +401,6 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 
 			createAsyncThread(this, SearchType.ALL, ListOperation.CREATE);
 			v.setClickable(true);
-
-		} else if (v == searchAllRadioButton) {
-			query.setVisibility(View.VISIBLE);
-			searchAll.setVisibility(View.VISIBLE);
-			search.setVisibility(View.VISIBLE);
-			searchSpecific.setVisibility(View.GONE);
-
-			currentType = SearchType.ALL;
-
-		} else if (v == searchSpecificRadioButton) {
-			searchAll.setVisibility(View.GONE);
-			searchSpecific.setVisibility(View.VISIBLE);
-			search.setVisibility(View.VISIBLE);
-
-			currentType = SearchType.SPECIFIC;
 
 		} else if (v == footerView) {
 
@@ -592,11 +522,7 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 			}
 
 			Log.d("doinBackGround", "finished");
-
-			// Looper.loop();
-
 			return null;
-			// Log.e(tag, msg);
 		}
 
 		@Override
@@ -617,7 +543,6 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 						R.drawable.ic_launcher, // dummy icon
 						(String) jSonInfo.get(i).get("title"),
 						(String) jSonInfo.get(i).get("image1"), // imageFileURL,
-						// thumb
 						(String) jSonInfo.get(i).get("displayName"), // author
 						(String) jSonInfo.get(i).get("description"),
 						(Long) jSonInfo.get(i).get("creationTime"),
@@ -659,7 +584,6 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 				for (ListItem item : listview_data) {
 					adapter.add(item);
 				}
-				// Log.d("AfterAdd: ", "keyyyyy" + String.valueOf(i));
 
 				Log.d("AfterAdd: ",
 						"keyyyyy" + String.valueOf(adapter.getCount()));
@@ -674,8 +598,10 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 		}
 	}
 
-	   @Override
-	    public boolean onCreateOptionsMenu(Menu menu) {
+
+    
+   @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
 //	        menu.add("Category")
 //	            .setIcon(R.drawable.ic_compose)
@@ -687,41 +613,62 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 //	        	.setIcon(R.drawable.ic_search)
 //	            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-	        MenuInflater inflater = getSupportMenuInflater();
-	        inflater.inflate(R.menu.menu, menu);
-	        return true;
-	    }
+        MenuInflater inflater = getSupportMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        
+        // Manually configured ItemID
+        SubMenu searchSubMenu = menu.addSubMenu("Search Submenu");
+        searchSubMenu.add(0, SEARCH_STA, 0, "Standard search");
+        searchSubMenu.add(0, SEARCH_TAG, 0, "Search by tag");
+        searchSubMenu.add(0, SEARCH_AUT, 0, "Search by author");
 
-	    @Override
-	    public boolean onOptionsItemSelected(MenuItem item)
-	    {
-	        switch (item.getItemId())
-	        {
-	            case R.id.menu_category:
-	    			Intent cateScreen = new Intent(getApplicationContext(),
-	    					CategoryActivity.class);
-	    			startActivity(cateScreen);
-	    			overridePendingTransition(R.anim.push_left_in, R.anim.push_up_out);
-	                return true;
-	                
-	            case R.id.menu_search:
-	    			query.setVisibility(View.VISIBLE);
-	    			searchAll.setVisibility(View.VISIBLE);
-	    			search.setVisibility(View.VISIBLE);
-	    			searchSpecific.setVisibility(View.GONE);
-	    			currentType = SearchType.ALL;
-	                return true;
-	                
-	            default:
-	                return super.onOptionsItemSelected(item);
-	        }
-	    }
-	    
-	    
-	    @Override
-	    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        MenuItem searchSubItem = searchSubMenu.getItem();
+        searchSubItem.setIcon(R.drawable.ic_search);
+        searchSubItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+        	case R.id.homeAsUp:
+        		
+            case R.id.menu_category:
+    			Intent cateScreen = new Intent(getApplicationContext(),
+    					CategoryActivity.class);
+    			startActivity(cateScreen);
+    			overridePendingTransition(R.anim.push_left_in, R.anim.push_up_out);
+                return true;
+                
+            case SEARCH_STA:
+    			query.setVisibility(View.VISIBLE);
+    			searchAll.setVisibility(View.VISIBLE);
+    			search.setVisibility(View.VISIBLE);
+    			searchSpecific.setVisibility(View.GONE);
+    			currentType = SearchType.ALL;
+                return true;
+                
+            case SEARCH_TAG:
+        	case SEARCH_AUT:
+    			searchAll.setVisibility(View.GONE);
+    			searchSpecific.setVisibility(View.VISIBLE);
+    			search.setVisibility(View.VISIBLE);
+    			currentType = SearchType.SPECIFIC;
+    			return true;
+    			
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    
+    @Override
+    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 //	        mSelected.setText("Selected: " + mLocations[itemPosition]);
-	        return true;
-	    }
+        return true;
+    }
 
 }

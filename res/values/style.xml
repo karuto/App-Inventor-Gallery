@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <style name="AIGProject.Theme" parent="Theme.Sherlock.Light">
-    	<item name="android:actionMenuTextColor">red</item>
+    <style name="AIGProject.Theme" parent="Theme.Sherlock.Light.DarkActionBar">
+    	<item name="android:actionMenuTextColor">#ce5333</item>
 	</style>
-    
+    <style name="Widget.Styled.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+	    <item name="background">@drawable/bg_striped</item>
+	    <item name="android:background">@drawable/bg_striped</item>
+	</style>
     
     <style name="midtext">
         <item name="android:layout_height">wrap_content</item>

@@ -1,5 +1,8 @@
 package com.android.aigproject;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -11,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import com.android.aigproject.R;
+import com.android.aigproject.AIGProjectActivity.SearchType;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,7 +29,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ItemDetailActivity extends Activity implements OnClickListener {
+public class ItemDetailActivity extends SherlockActivity implements OnClickListener {
 	ImageView Image;
 	TextView txtTitle;
 	TextView txtAuthor;
@@ -44,8 +48,9 @@ public class ItemDetailActivity extends Activity implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.itemdetail);
-
 		update();
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
 	}
 
 	/*
@@ -191,5 +196,19 @@ public class ItemDetailActivity extends Activity implements OnClickListener {
 		}
 
 	}
+	
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+        	case R.id.homeAsUp:
+        		finish();
+    			
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+	
 
 }
