@@ -143,7 +143,7 @@
     </LinearLayout>
     
     <LinearLayout
-        android:id="@+id/linearLayout1"
+        android:id="@+id/searchLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
@@ -156,11 +156,6 @@
             android:layout_height="wrap_content"
         	android:layout_marginBottom="10dp" 
             android:text="Search" />
-        <ImageView
-            android:id="@+id/waiting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/sync" />
     </LinearLayout>
    
 

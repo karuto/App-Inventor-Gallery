@@ -146,13 +146,13 @@ public class ItemDetailActivity extends SherlockActivity implements OnClickListe
 
 		Image.setImageBitmap(loadImageByURL(imageURL));
 
-		TextView globalHeader = (TextView) findViewById(R.id.globalHeader);
-		globalHeader.setClickable(true);
-		globalHeader.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View arg0) {
-				finish();
-			}
-		});
+//		TextView globalHeader = (TextView) findViewById(R.id.globalHeader);
+//		globalHeader.setClickable(true);
+//		globalHeader.setOnClickListener(new View.OnClickListener() {
+//			public void onClick(View arg0) {
+//				finish();
+//			}
+//		});
 		// Binding Click event to Button
 		btnClose.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View arg0) {
@@ -203,9 +203,9 @@ public class ItemDetailActivity extends SherlockActivity implements OnClickListe
         switch (item.getItemId())
         {
         	case R.id.homeAsUp:
-        		finish();
-    			
+        		finish();    			
             default:
+        		finish();  
                 return super.onOptionsItemSelected(item);
         }
     }

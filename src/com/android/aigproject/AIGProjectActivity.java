@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -58,12 +59,11 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 	Button search, switchTo;
 	View headerView, footerView;
 	TextView result, listfooterEmpty;
-	ImageView waiting;
 	EditText query, title, description, tag, authorId;
-	RadioGroup radioGroup;
 	RadioButton searchAllRadioButton, searchSpecificRadioButton;
-	LinearLayout searchAll, searchSpecific;
+	LinearLayout searchAll, searchSpecific, searchLayout;
 	ProgressBar progressBar;	
+	ProgressDialog progressDialog;
 	
 	int defaultStart = 0;
 	int defaultCount = 10;
@@ -105,19 +105,25 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 			StrictMode.setThreadPolicy(policy);			
 		}
 		
+		//this is ghost, do not delete it, or you will taste it.
+		progressBar = (ProgressBar) findViewById(R.id.progressSearch);
+		progressBar.setVisibility(View.GONE);
+		
+		progressDialog = ProgressDialog.show(AIGProjectActivity.this, "", "Loading... Please wait..");
+		
+		
 		// search layout
 		searchAll = (LinearLayout) findViewById(R.id.SearchAllField);
 		searchSpecific = (LinearLayout) findViewById(R.id.SearchSpecificField);
+		searchLayout = (LinearLayout) findViewById(R.id.searchLayout);
 
 		searchAll.setVisibility(View.GONE);
 		searchSpecific.setVisibility(View.GONE);
-
+		searchLayout.setVisibility(View.GONE);
+		
 		search = (Button) findViewById(R.id.buttonSearch);
 		search.setOnClickListener(this);
 		search.setVisibility(View.GONE);
-		waiting = (ImageView) findViewById(R.id.waiting);
-		waiting.setVisibility(View.INVISIBLE);
-
 		query = (EditText) findViewById(R.id.editText1);
 		title = (EditText) findViewById(R.id.editTextTitle);
 		description = (EditText) findViewById(R.id.editTextDescription);
@@ -193,8 +199,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 		// Intent i = new Intent(this, MyService.class);
 		// startService(i);
 
-		progressBar = (ProgressBar) findViewById(R.id.progressSearch);
-		progressBar.setVisibility(View.GONE);
+	
 
 		listfooterEmpty = (TextView) findViewById(R.id.empty);
 
@@ -206,8 +211,8 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 //        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 //        getSupportActionBar().setListNavigationCallbacks(list, this);
 
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setDisplayShowHomeEnabled(true);
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 	}
 
@@ -285,12 +290,13 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 			final SearchType type, ListOperation listOperation) {
 
 		Log.d("should create new thread", " should");
-
+		
 		// try {
 		boolean success = grabsQueries();
 
 		if (success) {
 			Log.d("haha", "before");
+			progressDialog.show();
 			new DownloadFilesTask(this, listOperation, type).execute();
 			// requestSearchingData(context, type);
 			Log.d("haha", "after");
@@ -385,10 +391,10 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 
 			closeKeyBoardFocus();
 
-			waiting.setVisibility(View.GONE);
 			searchSpecific.setVisibility(View.GONE);
 			searchAll.setVisibility(View.GONE);
 			query.setVisibility(View.GONE);
+			searchLayout.setVisibility(View.GONE);
 			search.setVisibility(View.GONE);
 
 
@@ -533,7 +539,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 		@Override
 		protected void onPostExecute(Long result) {
 			// showDialog("Downloaded " + result + " bytes");
-
+			progressDialog.hide();
 			Log.d("onPostExecute", "resdg");
 			ArrayList<ListItem> listview_data = new ArrayList<ListItem>(
 					jSonInfo.size());
@@ -646,6 +652,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
             case SEARCH_STA:
     			query.setVisibility(View.VISIBLE);
     			searchAll.setVisibility(View.VISIBLE);
+    			searchLayout.setVisibility(View.VISIBLE);
     			search.setVisibility(View.VISIBLE);
     			searchSpecific.setVisibility(View.GONE);
     			currentType = SearchType.ALL;
@@ -655,6 +662,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
         	case SEARCH_AUT:
     			searchAll.setVisibility(View.GONE);
     			searchSpecific.setVisibility(View.VISIBLE);
+    			searchLayout.setVisibility(View.VISIBLE);
     			search.setVisibility(View.VISIBLE);
     			currentType = SearchType.SPECIFIC;
     			return true;

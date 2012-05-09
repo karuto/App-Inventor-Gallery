@@ -1,5 +1,8 @@
 package com.android.aigproject;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class CategoryActivity extends Activity{
+public class CategoryActivity extends SherlockActivity{
 
 	private ListView categoryListView;
 
@@ -29,6 +32,8 @@ public class CategoryActivity extends Activity{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.category);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 		
 		
@@ -93,7 +98,19 @@ public class CategoryActivity extends Activity{
 		}
 
 	}
-
+	
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+        	case R.id.homeAsUp:
+        		finish();    			
+            default:
+        		finish();  
+                return super.onOptionsItemSelected(item);
+        }
+    }
 	
 	
 }
