@@ -12,6 +12,9 @@ public final class R {
         public static final int push_left_in=0x7f040000;
         public static final int push_up_out=0x7f040001;
     }
+    public static final class array {
+        public static final int locations=0x7f0c0000;
+    }
     public static final class attr {
         /**  Specified if we are forcing an action item overflow menu. 
          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
@@ -856,8 +859,8 @@ containing a value of this type.
         public static final int listMode=0x7f050002;
         public static final int listView1=0x7f050054;
         public static final int listViewCats=0x7f050027;
-        public static final int menu_category=0x7f050056;
-        public static final int menu_search=0x7f050055;
+        public static final int menu_category=0x7f050055;
+        public static final int menu_search=0x7f050056;
         public static final int normal=0x7f050001;
         public static final int progressSearch=0x7f050053;
         public static final int radioAll=0x7f050043;
@@ -923,7 +926,7 @@ containing a value of this type.
         public static final int sherlock_spinner_item=0x7f03001c;
     }
     public static final class menu {
-        public static final int menu=0x7f0c0000;
+        public static final int menu=0x7f0d0000;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -960,6 +963,7 @@ containing a value of this type.
         public static final int hello=0x7f0a000a;
     }
     public static final class style {
+        public static final int AIGProject_Theme=0x7f0b0058;
         public static final int DialogWindowTitle_Sherlock=0x7f0b0033;
         public static final int DialogWindowTitle_Sherlock_Light=0x7f0b0034;
         public static final int Sherlock___TextAppearance_Small=0x7f0b0047;
@@ -1048,12 +1052,12 @@ containing a value of this type.
         public static final int Widget_Sherlock_ProgressBar_Horizontal=0x7f0b0030;
         public static final int Widget_Sherlock_Spinner_DropDown_ActionBar=0x7f0b0024;
         public static final int Widget_Sherlock_TextView_SpinnerItem=0x7f0b0032;
-        public static final int band=0x7f0b0059;
-        public static final int detail=0x7f0b005c;
-        public static final int label=0x7f0b005b;
-        public static final int labeltext=0x7f0b005a;
-        public static final int midtext=0x7f0b0058;
-        public static final int smalltext=0x7f0b005d;
+        public static final int band=0x7f0b005a;
+        public static final int detail=0x7f0b005d;
+        public static final int label=0x7f0b005c;
+        public static final int labeltext=0x7f0b005b;
+        public static final int midtext=0x7f0b0059;
+        public static final int smalltext=0x7f0b005e;
     }
     public static final class styleable {
         /**  Attributes used to style the Action Bar. 

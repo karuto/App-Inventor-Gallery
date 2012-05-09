@@ -4,6 +4,7 @@ package com.android.aigproject;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.SubMenu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.MenuInflater;
 
@@ -29,6 +30,7 @@ import android.widget.AdapterView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HeaderViewListAdapter;
@@ -41,7 +43,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+   
 public class AIGProjectActivity extends SherlockActivity implements OnClickListener, ActionBar.OnNavigationListener {
 
 	public static enum SearchType {
@@ -213,6 +215,15 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 		progressBar.setVisibility(View.GONE);
 
 		listfooterEmpty = (TextView) findViewById(R.id.empty);
+		
+        Context context = getSupportActionBar().getThemedContext();
+        ArrayAdapter<CharSequence> list = ArrayAdapter.createFromResource(context, R.array.locations, R.layout.sherlock_spinner_item);
+        list.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
+
+        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        getSupportActionBar().setListNavigationCallbacks(list, this);
+		
+		
 
 	}
 
@@ -296,7 +307,7 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 
 		if (success) {
 			Log.d("haha", "before");
-			new DownloadFilesTask(this, listOperation).execute();
+			new DownloadFilesTask(this, listOperation, type).execute();
 			// requestSearchingData(context, type);
 			Log.d("haha", "after");
 		}
@@ -439,6 +450,9 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 			querySingle = query.getText().toString().trim();
 			TextView header = (TextView) findViewById(R.id.txtHeader);
 			header.setText("Search results for " + querySingle);
+			
+			currentType = SearchType.ALL;
+			
 
 			createAsyncThread(this, SearchType.ALL, ListOperation.CREATE);
 			v.setClickable(true);
@@ -461,11 +475,6 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 		} else if (v == footerView) {
 
 			Log.d("newstuff", "new blood is coming");
-			// Toast.makeText(AIGProjectActivity.this,
-			// "start at " + defaultStart + " end at " + defaultEnd,
-			// Toast.LENGTH_SHORT).show();
-			// defaultStart += defaultIncrement;
-			// defaultEnd += defaultIncrement;
 			if (currentType == SearchType.DEFAULT) {
 
 				if (defaultStart == 0) { // should be impossible
@@ -513,11 +522,13 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 		ArrayList<HashMap<String, Object>> jSonInfo = new ArrayList<HashMap<String, Object>>();
 		Context context;
 		ListOperation listOperation;
+		SearchType type;
 
 		public DownloadFilesTask(AIGProjectActivity aigProjectActivity,
-				ListOperation lo) {
+				ListOperation listOperation, SearchType type) {
 			this.context = aigProjectActivity;
-			this.listOperation = lo;
+			this.listOperation = listOperation;
+			this.type = type;
 			Log.d("constructor", "sdfsdf");
 
 			if (listOperation == ListOperation.APPEND) {
@@ -533,7 +544,7 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 
 			// progressBar.setVisibility(View.VISIBLE);
 
-			if (currentType == SearchType.DEFAULT) {
+			if (type == SearchType.DEFAULT) {
 				String URL = URLFactory.generate(URLFactory.Type.DEFAULT, null,
 						defaultStart, defaultCount);
 				defaultStart += defaultIncrement;
@@ -547,7 +558,7 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 							.setText("Internet Connection Problem occurs, please check your wift/3G connection");
 					listfooterEmpty.setTextColor(Color.RED);
 				}
-			} else if (currentType == SearchType.ALL) { // Search ALL
+			} else if (type == SearchType.ALL) { // Search ALL
 				String URL = URLFactory.generate(URLFactory.Type.ALL,
 						querySingle, allStart, allCount);
 				allCount += allIncrement;
@@ -561,7 +572,7 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 				}
 
 				Log.e("Type", "True");
-			} else if (currentType == SearchType.SPECIFIC) { // b == false
+			} else if (type == SearchType.SPECIFIC) { // b == false
 				// //Search
 				// Specific
 				for (int i = 0; i < queries.length; i++) {
@@ -622,6 +633,11 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 				adapter = new MainListAdapter(context, R.layout.list_item,
 						listview_data);
 				mainListView.setAdapter(adapter);
+				if (listview_data.size() == 0) {
+					listfooterEmpty.setText("No results found");
+					footerView.setBackgroundColor(Color.WHITE);
+					return;
+				}
 
 				Log.d("CREATE", "CREATE");
 
@@ -686,8 +702,16 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 	    					CategoryActivity.class);
 	    			startActivity(cateScreen);
 	    			overridePendingTransition(R.anim.push_left_in, R.anim.push_up_out);
-
 	                return true;
+	                
+	            case R.id.menu_search:
+	    			query.setVisibility(View.VISIBLE);
+	    			searchAll.setVisibility(View.VISIBLE);
+	    			search.setVisibility(View.VISIBLE);
+	    			searchSpecific.setVisibility(View.GONE);
+	    			currentType = SearchType.ALL;
+	                return true;
+	                
 	            default:
 	                return super.onOptionsItemSelected(item);
 	        }
