@@ -71,8 +71,8 @@ public class CategoryActivity extends SherlockActivity{
 					null, null, 11, 22, 33, 44, 333);
 		}
 
-		View header = (View) getLayoutInflater().inflate(R.layout.list_header, null);
-		CategoryListAdapter adapter = new CategoryListAdapter(this, R.layout.list_item,	listview_cats);
+		View header = (View) getLayoutInflater().inflate(R.layout.category_header, null);
+		CategoryListAdapter adapter = new CategoryListAdapter(this, R.layout.category_item,	listview_cats);
 		categoryListView = (ListView) findViewById(R.id.listViewCats);
 		categoryListView.addHeaderView(header);
 		categoryListView.setAdapter(adapter);

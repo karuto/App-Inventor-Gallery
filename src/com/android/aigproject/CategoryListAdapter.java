@@ -55,9 +55,9 @@ public class CategoryListAdapter extends ArrayAdapter<ListItem>{
             
             holder = new ListItemHolder();
             
-            ImageView image = (ImageView)row.findViewById(R.id.thumbnail);
+//            ImageView image = (ImageView)row.findViewById(R.id.thumbnail);
 //            image.setImageBitmap(loadImageByURL(holder.imageFileURL));
-            holder.imgIcon = image;
+//            holder.imgIcon = image;
             holder.txtTitle = (TextView)row.findViewById(R.id.txtTitle);
             
             row.setTag(holder);
@@ -71,7 +71,7 @@ public class CategoryListAdapter extends ArrayAdapter<ListItem>{
         ListItem source_item = data[position];
         holder.txtTitle.setText(source_item.title);
 //        holder.imgIcon.setImageResource(source_item.icon);
-        holder.imgIcon.setImageBitmap(loadImageByURL(source_item.imageFileURL));
+//        holder.imgIcon.setImageBitmap(loadImageByURL(source_item.imageFileURL));
     	return row;
     }
     
@@ -83,31 +83,6 @@ public class CategoryListAdapter extends ArrayAdapter<ListItem>{
     	String imageFileURL;
     }
     
-    private Bitmap loadImageByURL(String imageFileURL) {
-		try {
-			URL url = new URL(imageFileURL);
-			URLConnection conn = url.openConnection();
-			HttpURLConnection httpConn = (HttpURLConnection) conn;
-			httpConn.setRequestMethod("GET");
-			httpConn.connect();
-			if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				InputStream inputStream = httpConn.getInputStream();
-				Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-				inputStream.close();
-				return bitmap;
-			} else {
-				// return null;
-			}
-
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
     
     
 }
