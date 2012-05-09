@@ -15,7 +15,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuInflater;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -32,7 +35,6 @@ import android.os.Looper;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -52,7 +54,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AIGProjectActivity extends SherlockActivity implements OnClickListener {
+public class AIGProjectActivity extends SherlockActivity implements OnClickListener, ActionBar.OnNavigationListener {
 
 	public static enum SearchType {
 		DEFAULT, ALL, SPECIFIC
@@ -96,8 +98,8 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 		setContentView(R.layout.main);
 		
 		// Turn of strict mode by default since we are targeting 2.x
-		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-		StrictMode.setThreadPolicy(policy);
+//		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//		StrictMode.setThreadPolicy(policy);
 		
 		// search type
 		radioGroup = (RadioGroup) findViewById(R.id.radioGroup1);
@@ -514,21 +516,45 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //Used to put dark icons on light action bar
-//        boolean isLight = SampleList.THEME == R.style.Theme_Sherlock_Light;
 
-        menu.add("Category")
-            .setIcon(R.drawable.ic_compose)
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        menu.add("User")
-        .setIcon(R.drawable.ic_compose)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        menu.add("Search")
-        	.setIcon(R.drawable.ic_search)
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+//        menu.add("Category")
+//            .setIcon(R.drawable.ic_compose)
+//            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+//        menu.add("User")
+//        .setIcon(R.drawable.ic_compose)
+//        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+//        menu.add("Search")
+//        	.setIcon(R.drawable.ic_search)
+//            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
+        MenuInflater inflater = getSupportMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
         return true;
     }
-	
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case R.id.menu_category:
+    			Intent cateScreen = new Intent(getApplicationContext(),
+    					CategoryActivity.class);
+    			startActivity(cateScreen);
+    			overridePendingTransition(R.anim.push_left_in, R.anim.push_up_out);
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    
+    @Override
+    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+//        mSelected.setText("Selected: " + mLocations[itemPosition]);
+        return true;
+    }
+    
 
 }

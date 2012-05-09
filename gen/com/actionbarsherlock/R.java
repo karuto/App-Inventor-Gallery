@@ -854,6 +854,8 @@ containing a value of this type.
         public static final int listMode=0x7f050002;
         public static final int listView1=0x7f050053;
         public static final int listViewCats=0x7f050027;
+        public static final int menu_category=0x7f050055;
+        public static final int menu_search=0x7f050054;
         public static final int normal=0x7f050001;
         public static final int progressSearch=0x7f050052;
         public static final int radioAll=0x7f050042;
@@ -917,6 +919,9 @@ containing a value of this type.
         public static final int main=0x7f03001a;
         public static final int sherlock_spinner_dropdown_item=0x7f03001b;
         public static final int sherlock_spinner_item=0x7f03001c;
+    }
+    public static final class menu {
+        public static final int menu=0x7f0c0000;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 

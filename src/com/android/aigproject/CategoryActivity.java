@@ -85,8 +85,7 @@ public class CategoryActivity extends Activity{
 				long id) {
 			// TODO Auto-generated method stub
 			// get current ListItem selected
-			ListItem curItem = (ListItem) (parent.getAdapter()
-					.getItem(position));
+			ListItem curItem = (ListItem) (parent.getAdapter().getItem(position));
 			Toast.makeText(CategoryActivity.this,
 					"position of " + curItem.title, Toast.LENGTH_SHORT).show();
 			String URL = "http://app-inventor-gallery.appspot.com/rpc?tag=search:";
