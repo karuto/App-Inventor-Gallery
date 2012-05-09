@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -25,11 +26,12 @@ import android.widget.TextView;
 
 public class MainListAdapter extends ArrayAdapter<ListItem>{
     Context context; 
-    int layoutResourceId;    
-    ListItem data[] = null;
+    int layoutResourceId;  
+    ArrayList<ListItem> data;
+    //ListItem data[] = null;
     
     // Initializer
-    public MainListAdapter(Context context, int layoutResourceId, ListItem[] data) {
+    public MainListAdapter(Context context, int layoutResourceId, ArrayList<ListItem> data) {
     	super(context, layoutResourceId, data);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
@@ -69,7 +71,7 @@ public class MainListAdapter extends ArrayAdapter<ListItem>{
         }
     	
     	
-        ListItem source_item = data[position];
+        ListItem source_item = data.get(position);
         holder.txtTitle.setText(source_item.title);
         holder.txtAuthor.setText(source_item.author);
         holder.txtDesc.setText(source_item.desc);

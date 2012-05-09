@@ -15,12 +15,27 @@ public class JsonGrabber {
 	public static ArrayList<HashMap<String, Object>> retrieveQueryArray(String URL){
 		
 		//URL = "http://app-inventor-gallery.appspot.com/rpc?tag=search:sports";
-		String s;
+		String s = null;
 		JSONArray results;
-		s = UrlReader.search(URL);			
-		if (s == null) {
+		Log.d("before: ", "Regular1");
+		try {
+			s = UrlReader.search(URL);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			Log.d("Exception info:", e1.getMessage());
 			return null;
 		}
+		
+		if(s == null) return null;
+		Log.d("got it", s);
+		if(s.startsWith("<html>")){
+			Log.d("yes", "got it");
+			return null;
+		}
+		
+	
+		Log.d("after: ", "Regular2");
+		
 		try {
 			Log.d("URL", URL);
 			Log.d("JSon",String.valueOf(s));
@@ -44,11 +59,21 @@ public class JsonGrabber {
 	public static ArrayList<HashMap<String, Object>> retrieveQueryArrayByUID(String URL){
 		String s;
 		JSONObject results;
-		s = UrlReader.search(URL);		
-		//Log.d("url", URL);
-		if (s == null) {
+
+		Log.d("before: ", "UID1");
+		try {
+			s = UrlReader.search(URL);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			Log.d("Exception info:", e1.getMessage());
 			return null;
 		}
+		
+		if(s == null) return null;
+		if(s.startsWith("<html>")) return null;
+		
+	
+		Log.d("after: ", "UID2");
 		try {
 			JSONObject o = new JSONObject(s);
 			results = (JSONObject) ((JSONObject) o.get("result")).get("app");

@@ -1,18 +1,5 @@
 package com.android.aigproject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.ActionBar;
@@ -20,31 +7,31 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.MenuInflater;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -54,10 +41,15 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 public class AIGProjectActivity extends SherlockActivity implements OnClickListener, ActionBar.OnNavigationListener {
 
 	public static enum SearchType {
 		DEFAULT, ALL, SPECIFIC
+	}
+
+	public static enum ListOperation {
+		CREATE, APPEND, CLEAR
 	}
 
 	Button search;
@@ -68,6 +60,19 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 	EditText tag;
 	EditText authorId;
 
+	int defaultStart = 0;
+	int defaultCount = 10;
+	int defaultIncrement = 10;
+
+	int allStart = 0;
+	int allCount = 10;
+	int allIncrement = 10;
+
+	View headerView;
+	View footerView;
+
+	TextView listfooterEmpty;
+
 	Button switchTo;
 	ImageView waiting;
 
@@ -76,7 +81,8 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 	boolean loadingMore = false; // for dynamic list loading
 	MainListAdapter adapter;
 	private ListView mainListView;
-	ListItem listitem_holder[];
+	ArrayList<ListItem> listitem_holder = new ArrayList<ListItem>();
+	// ListItem listitem_holder[];
 
 	String querySingle = null;
 	String[] queries = new String[4]; /* title, description, tag, AuthorId */
@@ -98,8 +104,11 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 		setContentView(R.layout.main);
 		
 		// Turn of strict mode by default since we are targeting 2.x
-//		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//		StrictMode.setThreadPolicy(policy);
+		int apiLevel = android.os.Build.VERSION.SDK_INT;
+		if (apiLevel >= 10) {
+			StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+			StrictMode.setThreadPolicy(policy);			
+		}
 		
 		// search type
 		radioGroup = (RadioGroup) findViewById(R.id.radioGroup1);
@@ -138,22 +147,28 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 		types[3] = URLFactory.Type.AUTHORID;
 
 		// Defines the layout of each row in ListView.
-		ListItem listview_data2[] = new ListItem[0]; /*
-													 * begin with 0, so nothing
-													 * in there
-													 */
-		adapter = new MainListAdapter(this, R.layout.list_item, listview_data2);
+		ArrayList<ListItem> defaultListView = new ArrayList<ListItem>(); /*
+																		 * begin
+																		 * with
+																		 * 0, so
+																		 * nothing
+																		 * in
+																		 * there
+																		 */
+		adapter = new MainListAdapter(this, R.layout.list_item, defaultListView);
 
 		mainListView = (ListView) findViewById(R.id.listView1);
 
-		View headerView = (View) getLayoutInflater().inflate(R.layout.list_header,
+		headerView = (View) getLayoutInflater().inflate(R.layout.list_header,
 				null);
+		headerView.setOnClickListener(this);
 		mainListView.addHeaderView(headerView);
-		View footerView = ((LayoutInflater) this
+		footerView = ((LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
 				R.layout.listfooter, null, false);
+		footerView.setOnClickListener(this);
+
 		mainListView.addFooterView(footerView);
-		
 
 		mainListView.setAdapter(adapter);
 
@@ -164,7 +179,7 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 				colors));
 		mainListView.setDividerHeight(2);
 
-		createAsyncThread(this, SearchType.DEFAULT);
+		createAsyncThread(this, SearchType.DEFAULT, ListOperation.CREATE);
 
 		mainListView.setOnScrollListener(new OnScrollListener() {
 
@@ -184,119 +199,140 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 				// more !
 				if ((lastInScreen == totalItemCount) && !(loadingMore)) {
 					Log.d("Scroll", "HIHI");
-					Thread thread = new Thread(null, loadMoreListItems);
-					thread.start();
+					// Thread thread = new Thread(null, loadMoreListItems);
+					// thread.start();
 				}
 			}
 		});
 
-		Intent i = new Intent(this, MyService.class);
-		startService(i);
+		// Intent i = new Intent(this, MyService.class);
+		// startService(i);
 
-		Log.e("MyService now", String.valueOf(MyService.getInstance()));
+		// Log.e("MyService now", String.valueOf(MyService.getInstance()));
 		progressBar = (ProgressBar) findViewById(R.id.progressSearch);
 		progressBar.setVisibility(View.GONE);
+
+		listfooterEmpty = (TextView) findViewById(R.id.empty);
+
 	}
 
-	// Runnable to load the items
-	private Runnable loadMoreListItems = new Runnable() {
-		@Override
-		public void run() {
-			// Set flag so we cant load new items 2 at the same time
-			loadingMore = true;
+	// // Runnable to load the items
+	// private Runnable loadMoreListItems = new Runnable() {
+	// @Override
+	// public void run() {
+	// // Set flag so we cant load new items 2 at the same time
+	// loadingMore = true;
+	//
+	// // Reset the array that holds the new items
+	// ArrayList<ListItem> listitem_holder = new ArrayList<ListItem>();
+	//
+	// // Simulate a delay, delete this on a production environment!
+	// try {
+	// Thread.sleep(2000);
+	// } catch (InterruptedException e) {
+	// }
+	//
+	// // Get 15 new listitems (fixed number hard-code for now)
+	// for (int i = 0; i < 50; i++) {
+	// String text = "Reload - " + i;
+	// listitem_holder[i] = new ListItem(R.drawable.ic_launcher, text,
+	// null, "author",
+	// "Da da dadadada, da da dadadada, da dada da.", null,
+	// null, 11, 22, 33, 44, 333);
+	// }
+	//
+	// // Done! now continue on the UI thread
+	// runOnUiThread(returnRes);
+	//
+	// }
+	// };
 
-			// Reset the array that holds the new items
-			listitem_holder = new ListItem[50];
+	// // Since we cant update our UI from a thread this Runnable takes care of
+	// // that!
+	// private Runnable returnRes = new Runnable() {
+	// @Override
+	// public void run() {
+	//
+	// // Loop thru the new items and add them to the adapter
+	// if (listitem_holder != null && listitem_holder.size() > 0) {
+	// adapter = new MainListAdapter(getApplicationContext(),
+	// R.layout.list_item, listitem_holder);
+	// }
+	//
+	// // Tell to the adapter that changes have been made, this will cause
+	// // the list to refresh
+	// adapter.notifyDataSetChanged();
+	// // Done loading more.
+	// loadingMore = false;
+	// }
+	// };
 
-			// Simulate a delay, delete this on a production environment!
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-			}
+	@Override
+	public void onStart() {
+		super.onStart();
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); 
+//		closeKeyBoardFocus();
+//		query.clearFocus();
+//
+//		InputMethodManager imm = (InputMethodManager) this
+//				.getSystemService(Context.INPUT_METHOD_SERVICE);
+//		imm.hideSoftInputFromWindow(this.query.getApplicationWindowToken(), 0);
+	}
 
-			// Get 15 new listitems (fixed number hard-code for now)
-			for (int i = 0; i < 50; i++) {
-				String text = "Reload - " + i;
-				listitem_holder[i] = new ListItem(R.drawable.ic_launcher, text,
-						null, "author",
-						"Da da dadadada, da da dadadada, da dada da.", null,
-						null, 11, 22, 33, 44, 333);
-			}
+	@Override
+	public void onResume() {
+		super.onResume();
+//		closeKeyBoardFocus();
+//		query.clearFocus();
+	}
 
-			// Done! now continue on the UI thread
-			runOnUiThread(returnRes);
+	private void createAsyncThread(final Context context,
+			final SearchType type, ListOperation listOperation) {
 
-		}
-	};
-
-	// Since we cant update our UI from a thread this Runnable takes care of
-	// that!
-	private Runnable returnRes = new Runnable() {
-		@Override
-		public void run() {
-
-			// Loop thru the new items and add them to the adapter
-			if (listitem_holder != null && listitem_holder.length > 0) {
-				adapter = new MainListAdapter(getApplicationContext(),
-						R.layout.list_item, listitem_holder);
-			}
-
-			// Tell to the adapter that changes have been made, this will cause
-			// the list to refresh
-			adapter.notifyDataSetChanged();
-			// Done loading more.
-			loadingMore = false;
-		}
-	};
-
-	private void createAsyncThread(final Context context, final SearchType type) {
-		
 		Log.d("should create new thread", " should");
-		
-		
-		//try {
-			boolean success = grabsQueries();
 
-			if (success) {
-				Log.d("haha", "before");
-				new DownloadFilesTask(this).execute();
-				//requestSearchingData(context, type);
-				Log.d("haha", "after");
-			}
+		// try {
+		boolean success = grabsQueries();
 
-//		} catch (MalformedURLException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		
-		
-//		
-//		Thread thread = new Thread(new Runnable() {
-//			public void run() {
-//				Runnable r = new Runnable() {
-//					public void run() {
-//						try {
-//							boolean success = grabsQueries();
-//
-//							if (success) {
-//								Log.d("haha", "before");
-//								requestSearchingData(context, type);
-//								Log.d("haha", "after");
-//							}
-//
-//						} catch (MalformedURLException e) {
-//							e.printStackTrace();
-//						} catch (IOException e) {
-//							e.printStackTrace();
-//						}
-//					}
-//				};
-//
-//				runOnUiThread(r);
-//			}
-//		});
-//		thread.start();
+		if (success) {
+			Log.d("haha", "before");
+			new DownloadFilesTask(this, listOperation).execute();
+			// requestSearchingData(context, type);
+			Log.d("haha", "after");
+		}
+
+		// } catch (MalformedURLException e) {
+		// e.printStackTrace();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+
+		//
+		// Thread thread = new Thread(new Runnable() {
+		// public void run() {
+		// Runnable r = new Runnable() {
+		// public void run() {
+		// try {
+		// boolean success = grabsQueries();
+		//
+		// if (success) {
+		// Log.d("haha", "before");
+		// requestSearchingData(context, type);
+		// Log.d("haha", "after");
+		// }
+		//
+		// } catch (MalformedURLException e) {
+		// e.printStackTrace();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		// };
+		//
+		// runOnUiThread(r);
+		// }
+		// });
+		// thread.start();
 
 	}
 
@@ -334,12 +370,12 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 		return success;
 	}
 
-	public void requestSearchingData(final Context context, SearchType type)
-			throws MalformedURLException, IOException {
-
-		new DownloadFilesTask(this).execute();
-
-	}
+	// public void requestSearchingData(final Context context, SearchType type)
+	// throws MalformedURLException, IOException {
+	//
+	// new DownloadFilesTask(this, ListOperation.CREATE).execute();
+	//
+	// }
 
 	class MyListViewListener implements OnItemClickListener {
 
@@ -378,7 +414,6 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 
 	@Override
 	public void onClick(View v) {
-
 		if (v == search) {
 			// visible 0 Visible on screen; the default value.
 			// invisible 1 Not displayed, but taken into account during layout
@@ -387,6 +422,12 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 
 			// v.setBackgroundColor(Color.RED);
 			v.setClickable(false);
+
+			allCount = 10;
+			listfooterEmpty.setText("load more data...");
+
+			closeKeyBoardFocus();
+
 			waiting.setVisibility(View.GONE);
 			searchSpecific.setVisibility(View.GONE);
 			searchAll.setVisibility(View.GONE);
@@ -399,7 +440,7 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 			TextView header = (TextView) findViewById(R.id.txtHeader);
 			header.setText("Search results for " + querySingle);
 
-			createAsyncThread(this, SearchType.ALL);
+			createAsyncThread(this, SearchType.ALL, ListOperation.CREATE);
 			v.setClickable(true);
 
 		} else if (v == searchAllRadioButton) {
@@ -417,6 +458,52 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 
 			currentType = SearchType.SPECIFIC;
 
+		} else if (v == footerView) {
+
+			Log.d("newstuff", "new blood is coming");
+			// Toast.makeText(AIGProjectActivity.this,
+			// "start at " + defaultStart + " end at " + defaultEnd,
+			// Toast.LENGTH_SHORT).show();
+			// defaultStart += defaultIncrement;
+			// defaultEnd += defaultIncrement;
+			if (currentType == SearchType.DEFAULT) {
+
+				if (defaultStart == 0) { // should be impossible
+					createAsyncThread(this, SearchType.DEFAULT,
+							ListOperation.CREATE);
+				} else {
+					createAsyncThread(this, SearchType.DEFAULT,
+							ListOperation.APPEND);
+
+				}
+			} else if (currentType == SearchType.ALL) {
+				if (allStart == 0) { // should be impossible
+					createAsyncThread(this, SearchType.ALL,
+							ListOperation.CREATE);
+				} else {
+					createAsyncThread(this, SearchType.ALL,
+							ListOperation.APPEND);
+
+				}
+
+			} else if (currentType == SearchType.SPECIFIC) {
+
+			}
+
+		}
+
+	}
+
+	private void closeKeyBoardFocus() {
+		if (this.getCurrentFocus() != null) {
+
+			InputMethodManager inputManager = (InputMethodManager) this
+					.getSystemService(Context.INPUT_METHOD_SERVICE);
+			inputManager.hideSoftInputFromWindow(this.getCurrentFocus()
+					.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+		} else {
+			Log.d("KeyBoard", "this is null");
 		}
 
 	}
@@ -425,10 +512,18 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 
 		ArrayList<HashMap<String, Object>> jSonInfo = new ArrayList<HashMap<String, Object>>();
 		Context context;
+		ListOperation listOperation;
 
-		public DownloadFilesTask(AIGProjectActivity aigProjectActivity) {
+		public DownloadFilesTask(AIGProjectActivity aigProjectActivity,
+				ListOperation lo) {
 			this.context = aigProjectActivity;
+			this.listOperation = lo;
 			Log.d("constructor", "sdfsdf");
+
+			if (listOperation == ListOperation.APPEND) {
+				footerView.setBackgroundColor(Color.BLACK);
+			}
+
 		}
 
 		@Override
@@ -436,18 +531,33 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 			Log.d("doinBackGround", "sdfsdf");
 			ArrayList<HashMap<String, Object>> tmp;
 
+			// progressBar.setVisibility(View.VISIBLE);
+
 			if (currentType == SearchType.DEFAULT) {
-				String URL = URLFactory.generate(URLFactory.Type.DEFAULT, null);
+				String URL = URLFactory.generate(URLFactory.Type.DEFAULT, null,
+						defaultStart, defaultCount);
+				defaultStart += defaultIncrement;
+				Log.d("URL", "URL: " + URL);
+
 				tmp = JsonGrabber.retrieveQueryArray(URL);
 				if (tmp != null) {
 					jSonInfo.addAll(tmp);
+				} else {
+					listfooterEmpty
+							.setText("Internet Connection Problem occurs, please check your wift/3G connection");
+					listfooterEmpty.setTextColor(Color.RED);
 				}
 			} else if (currentType == SearchType.ALL) { // Search ALL
 				String URL = URLFactory.generate(URLFactory.Type.ALL,
-						querySingle);
+						querySingle, allStart, allCount);
+				allCount += allIncrement;
 				tmp = JsonGrabber.retrieveQueryArray(URL);
 				if (tmp != null) {
 					jSonInfo.addAll(tmp);
+				} else {
+					listfooterEmpty
+							.setText("Internet Connection Problem occurs, please check your wift/3G connection");
+					listfooterEmpty.setTextColor(Color.RED);
 				}
 
 				Log.e("Type", "True");
@@ -460,6 +570,10 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 						tmp = JsonGrabber.retrieveQueryArray(URL);
 						if (tmp != null) {
 							jSonInfo.addAll(tmp);
+						} else {
+							listfooterEmpty
+									.setText("Internet Connection Problem occurs, please check your wift/3G connection");
+							listfooterEmpty.setTextColor(Color.RED);
 						}
 					}
 				}
@@ -482,13 +596,13 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 		@Override
 		protected void onPostExecute(Long result) {
 			// showDialog("Downloaded " + result + " bytes");
-			
+
 			Log.d("onPostExecute", "resdg");
-			
-			
-			ListItem listview_data[] = new ListItem[jSonInfo.size()];
+			ArrayList<ListItem> listview_data = new ArrayList<ListItem>(
+					jSonInfo.size());
+			// ListItem listview_data[] = new ListItem[jSonInfo.size()];
 			for (int i = 0; i < jSonInfo.size(); i++) {
-				listview_data[i] = new ListItem(
+				listview_data.add(new ListItem(
 						R.drawable.ic_launcher, // dummy icon
 						(String) jSonInfo.get(i).get("title"),
 						(String) jSonInfo.get(i).get("image1"), // imageFileURL,
@@ -501,60 +615,89 @@ public class AIGProjectActivity extends SherlockActivity implements OnClickListe
 						(Integer) jSonInfo.get(i).get("numViewed"),
 						(Integer) jSonInfo.get(i).get("numDownloads"),
 						(Integer) jSonInfo.get(i).get("numComments"),
-						(Integer) jSonInfo.get(i).get("uid"));
+						(Integer) jSonInfo.get(i).get("uid")));
+			}
+			MainListAdapter adapter = null;
+			if (listOperation == ListOperation.CREATE) {
+				adapter = new MainListAdapter(context, R.layout.list_item,
+						listview_data);
+				mainListView.setAdapter(adapter);
+
+				Log.d("CREATE", "CREATE");
+
+			} else if (listOperation == ListOperation.APPEND) {
+
+				HeaderViewListAdapter hva = (HeaderViewListAdapter) mainListView
+						.getAdapter();
+				adapter = (MainListAdapter) hva.getWrappedAdapter();
+
+				Log.d("beforeAdd: ",
+						"keyyyyy" + String.valueOf(adapter.getCount()));
+
+				if (listview_data.size() == 0) {
+					listfooterEmpty.setText("No more data");
+					footerView.setBackgroundColor(Color.WHITE);
+					return;
+				}
+
+				for (ListItem item : listview_data) {
+					adapter.add(item);
+				}
+				// Log.d("AfterAdd: ", "keyyyyy" + String.valueOf(i));
+
+				Log.d("AfterAdd: ",
+						"keyyyyy" + String.valueOf(adapter.getCount()));
+				Log.d("APPEND", "APPEND");
 			}
 
-			MainListAdapter adapter = new MainListAdapter(context,
-					R.layout.list_item, listview_data);
-			mainListView.setAdapter(adapter);
-			Log.d("length: ", String.valueOf(jSonInfo.size()));
+			footerView.setBackgroundColor(Color.WHITE);
+
 			Log.d("onPost", "finished");
+			// progressBar.setVisibility(View.GONE);
 
 		}
 	}
-	
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+	   @Override
+	    public boolean onCreateOptionsMenu(Menu menu) {
 
-//        menu.add("Category")
-//            .setIcon(R.drawable.ic_compose)
-//            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-//        menu.add("User")
-//        .setIcon(R.drawable.ic_compose)
-//        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-//        menu.add("Search")
-//        	.setIcon(R.drawable.ic_search)
-//            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+//	        menu.add("Category")
+//	            .setIcon(R.drawable.ic_compose)
+//	            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+//	        menu.add("User")
+//	        .setIcon(R.drawable.ic_compose)
+//	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+//	        menu.add("Search")
+//	        	.setIcon(R.drawable.ic_search)
+//	            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-        MenuInflater inflater = getSupportMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
+	        MenuInflater inflater = getSupportMenuInflater();
+	        inflater.inflate(R.menu.menu, menu);
+	        return true;
+	    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
-            case R.id.menu_category:
-    			Intent cateScreen = new Intent(getApplicationContext(),
-    					CategoryActivity.class);
-    			startActivity(cateScreen);
-    			overridePendingTransition(R.anim.push_left_in, R.anim.push_up_out);
+	    @Override
+	    public boolean onOptionsItemSelected(MenuItem item)
+	    {
+	        switch (item.getItemId())
+	        {
+	            case R.id.menu_category:
+	    			Intent cateScreen = new Intent(getApplicationContext(),
+	    					CategoryActivity.class);
+	    			startActivity(cateScreen);
+	    			overridePendingTransition(R.anim.push_left_in, R.anim.push_up_out);
 
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-    
-    
-    @Override
-    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-//        mSelected.setText("Selected: " + mLocations[itemPosition]);
-        return true;
-    }
-    
+	                return true;
+	            default:
+	                return super.onOptionsItemSelected(item);
+	        }
+	    }
+	    
+	    
+	    @Override
+	    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+//	        mSelected.setText("Selected: " + mLocations[itemPosition]);
+	        return true;
+	    }
 
 }

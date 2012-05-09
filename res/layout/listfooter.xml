@@ -3,14 +3,17 @@
     android:layout_width="fill_parent"
     android:gravity="center_horizontal"
     android:padding="3dp"
-    android:layout_height="fill_parent">	
+    android:layout_height="fill_parent"
+    >	
 	
+    
     <TextView
         android:id="@+id/empty"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:gravity="center"
         android:padding="5dp"
-        android:text="Loading more data..."/>
+        android:text="Loading more data..."
+       />
 
 </LinearLayout>

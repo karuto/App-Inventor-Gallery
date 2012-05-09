@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/bgtile"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     
     <RelativeLayout
@@ -63,7 +63,8 @@
             android:id="@+id/editText1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="game" />
+            android:text="game" 
+            android:imeOptions="actionDone"/>
     </LinearLayout>
 
     <LinearLayout
@@ -98,7 +99,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
 	        	android:layout_weight="3"
-                android:hint="e.g. games" />
+                android:hint="e.g. games" 
+                android:imeOptions="actionDone"/>
         </LinearLayout>
 		
         <!-- Description: -->
@@ -123,7 +125,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
 	        	android:layout_weight="3"
-                android:hint="e.g. notepad app" />
+                android:hint="e.g. notepad app" 
+                android:imeOptions="actionDone"/>
         </LinearLayout>
 		
         <!-- Tag: -->
@@ -148,7 +151,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
 	        	android:layout_weight="3"
-                android:hint="e.g. sports" />
+                android:hint="e.g. sports" 
+                android:imeOptions="actionDone"/>
         </LinearLayout>
         
         
@@ -174,7 +178,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
 	        	android:layout_weight="3"
-                android:hint="e.g. 11494839985..."/>
+                android:hint="e.g. 11494839985..."
+                android:imeOptions="actionDone"/>
         </LinearLayout>
         
     </LinearLayout>

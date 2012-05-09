@@ -131,7 +131,16 @@
 		     android:layout_width="wrap_content"
 	     	 android:layout_toRightOf="@+id/beforeNumLikes"
 		     style="@style/labeltext"/>
-	     	   
+		  <ImageButton android:id="@+id/buttonLikes"
+		     android:contentDescription="Like me"
+		     android:layout_width="32dp"
+	     	 android:layout_height="32dp"
+	     	 android:layout_toRightOf="@+id/beforeNumLikes"
+	     	 android:background="@drawable/thumbup"
+	     	 android:padding="5dp"
+	     	 android:layout_marginLeft="15dp"
+			/>
+	   
 	  <TextView android:id="@+id/beforeNumViewed"
 	     android:layout_below="@+id/beforeNumLikes"
      	 android:text="Views"
