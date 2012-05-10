@@ -65,6 +65,10 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 	ProgressBar progressBar;	
 	ProgressDialog progressDialog;
 	
+	
+	boolean lockLoadingMoreFooter = false;
+	
+	
 	int defaultStart = 0;
 	int defaultCount = 10;
 	int defaultIncrement = 10;
@@ -286,22 +290,57 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 //		query.clearFocus();
 	}
 
-	private void createAsyncThread(final Context context,
+	private boolean createAsyncThread(final Context context,
 			final SearchType type, ListOperation listOperation) {
 
 		Log.d("should create new thread", " should");
 		
 		// try {
 		boolean success = grabsQueries();
-
+		
+		listViewHeaderTextView(success);
+		
 		if (success) {
 			Log.d("haha", "before");
+			
 			progressDialog.show();
 			new DownloadFilesTask(this, listOperation, type).execute();
 			// requestSearchingData(context, type);
 			Log.d("haha", "after");
 		}
+		
+		Log.d("should create new thread", String.valueOf(success));
+		return success;
 
+	}
+	
+	// 
+	private void listViewHeaderTextView(boolean success){
+		TextView header = (TextView) findViewById(R.id.txtHeader);
+		if(success){
+			if (currentType == SearchType.DEFAULT) {
+				
+			}else if (currentType == SearchType.ALL) {
+				String _query = query.getText().toString().trim();
+				
+				header.setText("Search results for " + _query);
+			} else if (currentType == SearchType.SPECIFIC){
+				String _querys = "";
+				for(int i = 0; i < editTextList.length; i++){
+					if(editTextList[i] != null && !editTextList[i].getText().toString().trim().equals("")){
+						_querys += editTextList[i].getText().toString().trim() + " ";
+					}
+				}
+				
+				header.setText("Search results for " + _querys);
+			}
+		}else{
+			header.setText("Invalid query, please search again.");
+		}
+		
+		
+		
+		
 	}
 
 	private boolean grabsQueries() {
@@ -318,6 +357,8 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 					&& query.getText().toString().trim().length() != 0) {
 				querySingle = query.getText().toString().trim();
 				success = true;
+				Log.d("taggggggggggggggggggggg", querySingle + "<<<");
+				
 			} else {
 
 			}
@@ -383,57 +424,61 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 	@Override
 	public void onClick(View v) {
 		if (v == search) {
-
+			
 			v.setClickable(false);
-
-			allCount = 10;
-			listfooterEmpty.setText("load more data...");
-
-			closeKeyBoardFocus();
-
-			searchSpecific.setVisibility(View.GONE);
-			searchAll.setVisibility(View.GONE);
-			query.setVisibility(View.GONE);
-			searchLayout.setVisibility(View.GONE);
-			search.setVisibility(View.GONE);
-
-
-			querySingle = query.getText().toString().trim();
-			TextView header = (TextView) findViewById(R.id.txtHeader);
-			header.setText("Search results for " + querySingle);
 			
-			currentType = SearchType.ALL;
+			boolean success = createAsyncThread(this, currentType, ListOperation.CREATE);
 			
+			if(success){
+				lockLoadingMoreFooter = false;
+				allCount = 10;
+				listfooterEmpty.setText("load more data...");
 
-			createAsyncThread(this, SearchType.ALL, ListOperation.CREATE);
+				closeKeyBoardFocus();
+
+				searchSpecific.setVisibility(View.GONE);
+				searchAll.setVisibility(View.GONE);
+				query.setVisibility(View.GONE);
+				searchLayout.setVisibility(View.GONE);
+				search.setVisibility(View.GONE);
+
+			}else{
+				
+			}
+
+			
 			v.setClickable(true);
 
 		} else if (v == footerView) {
 
-			Log.d("newstuff", "new blood is coming");
-			if (currentType == SearchType.DEFAULT) {
+			if(!lockLoadingMoreFooter){
+				Log.d("newstuff", "new blood is coming");
+				if (currentType == SearchType.DEFAULT) {
 
-				if (defaultStart == 0) { // should be impossible
-					createAsyncThread(this, SearchType.DEFAULT,
-							ListOperation.CREATE);
-				} else {
-					createAsyncThread(this, SearchType.DEFAULT,
-							ListOperation.APPEND);
+					if (defaultStart == 0) { // should be impossible
+						createAsyncThread(this, SearchType.DEFAULT,
+								ListOperation.CREATE);
+					} else {
+						createAsyncThread(this, SearchType.DEFAULT,
+								ListOperation.APPEND);
+
+					}
+				} else if (currentType == SearchType.ALL) {
+					if (allStart == 0) { // should be impossible
+						createAsyncThread(this, SearchType.ALL,
+								ListOperation.CREATE);
+					} else {
+						createAsyncThread(this, SearchType.ALL,
+								ListOperation.APPEND);
+
+					}
+
+				} else if (currentType == SearchType.SPECIFIC) {
 
 				}
-			} else if (currentType == SearchType.ALL) {
-				if (allStart == 0) { // should be impossible
-					createAsyncThread(this, SearchType.ALL,
-							ListOperation.CREATE);
-				} else {
-					createAsyncThread(this, SearchType.ALL,
-							ListOperation.APPEND);
-
-				}
-
-			} else if (currentType == SearchType.SPECIFIC) {
-
 			}
+			
+			
 
 		}
 
@@ -566,6 +611,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 				mainListView.setAdapter(adapter);
 				if (listview_data.size() == 0) {
 					listfooterEmpty.setText("No results found");
+					lockLoadingMoreFooter = true;
 					footerView.setBackgroundColor(Color.WHITE);
 					return;
 				}
@@ -583,6 +629,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 
 				if (listview_data.size() == 0) {
 					listfooterEmpty.setText("No more data");
+					lockLoadingMoreFooter = true;
 					footerView.setBackgroundColor(Color.WHITE);
 					return;
 				}
