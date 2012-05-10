@@ -794,15 +794,16 @@ containing a value of this type.
         public static final int bg_striped_img=0x7f020056;
         public static final int bgtile=0x7f020057;
         public static final int dia=0x7f020058;
-        public static final int hex=0x7f020059;
-        public static final int ic_compose=0x7f02005a;
-        public static final int ic_launcher=0x7f02005b;
-        public static final int ic_search=0x7f02005c;
-        public static final int mesh=0x7f02005d;
-        public static final int rough=0x7f02005e;
-        public static final int stripes=0x7f02005f;
-        public static final int sync=0x7f020060;
-        public static final int thumbup=0x7f020061;
+        public static final int gradient=0x7f020059;
+        public static final int hex=0x7f02005a;
+        public static final int ic_compose=0x7f02005b;
+        public static final int ic_launcher=0x7f02005c;
+        public static final int ic_search=0x7f02005d;
+        public static final int mesh=0x7f02005e;
+        public static final int rough=0x7f02005f;
+        public static final int stripes=0x7f020060;
+        public static final int sync=0x7f020061;
+        public static final int thumbup=0x7f020062;
     }
     public static final class id {
         public static final int SearchAllField=0x7f050041;

@@ -97,9 +97,6 @@ public class MainListAdapter extends ArrayAdapter<ListItem>{
 			
 			if(!imageFileURL.endsWith("00")){
 				imageFileURL = imageFileURL + "100";
-				
-				Log.e("found one", "sdfd");
-				
 			}
 			
 			
