@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -26,14 +27,18 @@ import android.widget.TextView;
 public class CategoryListAdapter extends ArrayAdapter<ListItem>{
     Context context; 
     int layoutResourceId;    
-    ListItem data[] = null;
+    ArrayList<ListItem> data;
+    //ListItem data[] = null;
+    Boolean isCategory;
     
     // Initializer
-    public CategoryListAdapter(Context context, int layoutResourceId, ListItem[] data) {
+    public CategoryListAdapter(Context context, int layoutResourceId, 
+    		ArrayList<ListItem> data, Boolean isCategory) {
     	super(context, layoutResourceId, data);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
         this.data = data;
+        this.isCategory = isCategory;
     }
 
     /* This will be called for every item in the ListView,
@@ -67,9 +72,14 @@ public class CategoryListAdapter extends ArrayAdapter<ListItem>{
             holder = (ListItemHolder)row.getTag();
         }
     	
-    	
-        ListItem source_item = data[position];
-        holder.txtTitle.setText(source_item.title);
+
+        ListItem source_item = data.get(position);
+        if (isCategory) {
+            holder.txtTitle.setText("Category - " + source_item.title);
+        } else {
+            holder.txtTitle.setText(source_item.title);        	
+        }
+
 //        holder.imgIcon.setImageResource(source_item.icon);
 //        holder.imgIcon.setImageBitmap(loadImageByURL(source_item.imageFileURL));
     	return row;

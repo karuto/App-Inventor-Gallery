@@ -26,6 +26,8 @@
         </activity>
         <activity android:name=".CategoryActivity" >
         </activity>
+        <activity android:name=".GenericListActivity" >
+        </activity>
         
     </application>
 

@@ -38,9 +38,7 @@ public class JsonGrabber {
 		
 		try {
 			Log.d("URL", URL);
-			Log.d("JSon",String.valueOf(s));
-			
-			
+			Log.d("JSon",String.valueOf(s));			
 			JSONObject o = new JSONObject(s);
 			results = (JSONArray) o.get("result");
 			Log.d("MAIN",String.valueOf(results.length()));

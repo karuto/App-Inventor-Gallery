@@ -25,11 +25,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class CategoryActivity extends SherlockActivity{
+public class CategoryActivity extends SherlockActivity {
 
 	ListView categoryListView;
 	JSONArray results;
-	String[] rawcate = new String[20];
+	ArrayList<ListItem> rawcate = new ArrayList<ListItem>();
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -40,39 +40,33 @@ public class CategoryActivity extends SherlockActivity{
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		
 		String source = "http://app-inventor-gallery.appspot.com/rpc?tag=get_categories";		
-//		ArrayList<HashMap<String, Object>> catsArray = new ArrayList<HashMap<String, Object>>();
-//		catsArray = JsonGrabber.retrieveQueryArray(source);
+		String imageFileURL = "http://lh6.ggpht.com/JL2goqwVeu8ds9vGYTUPP" +
+				"cw4pF93TEgAnt0YG6eAaxzSE8W2sLa6cmw5bFoxNcgTPPCgJZ6SQWZE0dAj9Fo6trLft9S8pWOdPQ=s100";
 		
 		
+		// start fetch the arraylist data, for this we only need 1 string for each.
 		try {
 			source = UrlReader.generalGet(source);
 			JSONObject o = new JSONObject(source);
 			Log.d("CATE", o.toString());
 			results = (JSONArray) o.get("result");
 			Log.d("CATE", results.toString() + String.valueOf(results.length()));
+			
 			for (int i = 0; i < results.length(); i++) {
-				String singleCate = results.getString(i);
-				rawcate[i] = singleCate;
-				Log.d("RAW CATE", rawcate[i]);
+				try {
+					rawcate.add(new ListItem(R.drawable.ic_launcher, results.getString(i),
+							imageFileURL, null, null, null, null, 0, 0, 0, 0, 0));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}			
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		
-		ListItem listview_cats[] = new ListItem[18];
-		String imageFileURL = "http://lh6.ggpht.com/JL2goqwVeu8ds9vGYTUPPcw4pF93TEgAnt0YG6eAaxzSE8W2sLa6cmw5bFoxNcgTPPCgJZ6SQWZE0dAj9Fo6trLft9S8pWOdPQ=s100";
-
-		for (int i = 0; i < listview_cats.length; i++) {
-			String text = "Category - " + rawcate[i];
-			listview_cats[i] = new ListItem(R.drawable.ic_launcher, text,
-					imageFileURL, null, null,
-					null, null, 11, 22, 33, 44, 333);
-		}
 
 		View header = (View) getLayoutInflater().inflate(R.layout.category_header, null);
-		CategoryListAdapter adapter = new CategoryListAdapter(this, R.layout.category_item,	listview_cats);
+		CategoryListAdapter adapter = new CategoryListAdapter(this, R.layout.category_item,	rawcate, true);
 		categoryListView = (ListView) findViewById(R.id.listViewCats);
 		categoryListView.addHeaderView(header);
 		categoryListView.setAdapter(adapter);
@@ -83,12 +77,17 @@ public class CategoryActivity extends SherlockActivity{
 	class MyListViewListener implements OnItemClickListener {
 		
 		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			// get current ListItem selected
+			Intent nextScreen = new Intent(getApplicationContext(), GenericListActivity.class);
 			ListItem curItem = (ListItem) (parent.getAdapter().getItem(position));
 			Toast.makeText(CategoryActivity.this,
 					"position of " + curItem.title, Toast.LENGTH_SHORT).show();
+
+			nextScreen.putExtra("category", curItem.title);
+			startActivity(nextScreen);
+			overridePendingTransition(R.anim.push_left_in, R.anim.push_up_out);
+			
 		}
 
 	}

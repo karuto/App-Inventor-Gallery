@@ -102,7 +102,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		// Turn of strict mode by default since we are targeting 2.x
+		// Turn off strict mode by default since we are targeting 2.x
 		int apiLevel = android.os.Build.VERSION.SDK_INT;
 		if (apiLevel >= 10) {
 			StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -157,16 +157,14 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 
 		mainListView = (ListView) findViewById(R.id.listView1);
 
-		headerView = (View) getLayoutInflater().inflate(R.layout.list_header,
-				null);
+		headerView = (View) getLayoutInflater().inflate(R.layout.list_header, null);
 		headerView.setOnClickListener(this);
 		mainListView.addHeaderView(headerView);
-		footerView = ((LayoutInflater) this
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-				R.layout.listfooter, null, false);
+		footerView = ((LayoutInflater) this.getSystemService(
+				Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.listfooter, null, false);
 		footerView.setOnClickListener(this);
-
 		mainListView.addFooterView(footerView);
+		
 		mainListView.setAdapter(adapter);
 		mainListView.setOnItemClickListener(new MyListViewListener());
 
@@ -215,61 +213,8 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 //        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 //        getSupportActionBar().setListNavigationCallbacks(list, this);
 
-//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//		getSupportActionBar().setDisplayShowHomeEnabled(true);
-
 	}
 
-	// // Runnable to load the items
-	// private Runnable loadMoreListItems = new Runnable() {
-	// @Override
-	// public void run() {
-	// // Set flag so we cant load new items 2 at the same time
-	// loadingMore = true;
-	//
-	// // Reset the array that holds the new items
-	// ArrayList<ListItem> listitem_holder = new ArrayList<ListItem>();
-	//
-	// // Simulate a delay, delete this on a production environment!
-	// try {
-	// Thread.sleep(2000);
-	// } catch (InterruptedException e) {
-	// }
-	//
-	// // Get 15 new listitems (fixed number hard-code for now)
-	// for (int i = 0; i < 50; i++) {
-	// String text = "Reload - " + i;
-	// listitem_holder[i] = new ListItem(R.drawable.ic_launcher, text,
-	// null, "author",
-	// "Da da dadadada, da da dadadada, da dada da.", null,
-	// null, 11, 22, 33, 44, 333);
-	// }
-	//
-	// // Done! now continue on the UI thread
-	// runOnUiThread(returnRes);
-	//
-	// }
-	// };
-
-	// // Since we cant update our UI from a thread this Runnable takes care of
-	// // that!
-	// private Runnable returnRes = new Runnable() {
-	// @Override
-	// public void run() {
-	//
-	// // Loop thru the new items and add them to the adapter
-	// if (listitem_holder != null && listitem_holder.size() > 0) {
-	// adapter = new MainListAdapter(getApplicationContext(),
-	// R.layout.list_item, listitem_holder);
-	// }
-	//
-	// // Tell to the adapter that changes have been made, this will cause
-	// // the list to refresh
-	// adapter.notifyDataSetChanged();
-	// // Done loading more.
-	// loadingMore = false;
-	// }
-	// };
 
 	@Override
 	public void onStart() {
@@ -357,7 +302,6 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 					&& query.getText().toString().trim().length() != 0) {
 				querySingle = query.getText().toString().trim();
 				success = true;
-				Log.d("taggggggggggggggggggggg", querySingle + "<<<");
 				
 			} else {
 
@@ -379,12 +323,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 		return success;
 	}
 
-	// public void requestSearchingData(final Context context, SearchType type)
-	// throws MalformedURLException, IOException {
-	//
-	// new DownloadFilesTask(this, ListOperation.CREATE).execute();
-	//
-	// }
+
 
 	class MyListViewListener implements OnItemClickListener {
 
@@ -536,7 +475,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 					jSonInfo.addAll(tmp);
 				} else {
 					listfooterEmpty
-							.setText("Internet Connection Problem occurs, please check your wift/3G connection");
+							.setText("Internet Connection Problem occurs, please check your Wifi/3G connection");
 					listfooterEmpty.setTextColor(Color.RED);
 				}
 			} else if (type == SearchType.ALL) { // Search ALL
@@ -548,7 +487,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 					jSonInfo.addAll(tmp);
 				} else {
 					listfooterEmpty
-							.setText("Internet Connection Problem occurs, please check your wift/3G connection");
+							.setText("Internet Connection Problem occurs, please check your Wifi/3G connection");
 					listfooterEmpty.setTextColor(Color.RED);
 				}
 
@@ -564,7 +503,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 							jSonInfo.addAll(tmp);
 						} else {
 							listfooterEmpty
-									.setText("Internet Connection Problem occurs, please check your wift/3G connection");
+									.setText("Internet Connection Problem occurs, please check your Wifi/3G connection");
 							listfooterEmpty.setTextColor(Color.RED);
 						}
 					}
