@@ -793,17 +793,19 @@ containing a value of this type.
         public static final int bg_striped=0x7f020055;
         public static final int bg_striped_img=0x7f020056;
         public static final int bgtile=0x7f020057;
-        public static final int dia=0x7f020058;
-        public static final int gradient=0x7f020059;
-        public static final int hex=0x7f02005a;
-        public static final int ic_compose=0x7f02005b;
-        public static final int ic_launcher=0x7f02005c;
-        public static final int ic_search=0x7f02005d;
-        public static final int mesh=0x7f02005e;
-        public static final int rough=0x7f02005f;
-        public static final int stripes=0x7f020060;
-        public static final int sync=0x7f020061;
-        public static final int thumbup=0x7f020062;
+        public static final int border=0x7f020058;
+        public static final int dia=0x7f020059;
+        public static final int gradient=0x7f02005a;
+        public static final int gradient_dark=0x7f02005b;
+        public static final int hex=0x7f02005c;
+        public static final int ic_compose=0x7f02005d;
+        public static final int ic_launcher=0x7f02005e;
+        public static final int ic_search=0x7f02005f;
+        public static final int mesh=0x7f020060;
+        public static final int rough=0x7f020061;
+        public static final int stripes=0x7f020062;
+        public static final int sync=0x7f020063;
+        public static final int thumbup=0x7f020064;
     }
     public static final class id {
         public static final int SearchAllField=0x7f050041;
@@ -1052,12 +1054,13 @@ containing a value of this type.
         public static final int Widget_Sherlock_Spinner_DropDown_ActionBar=0x7f0b0024;
         public static final int Widget_Sherlock_TextView_SpinnerItem=0x7f0b0032;
         public static final int Widget_Styled_ActionBar=0x7f0b0059;
-        public static final int band=0x7f0b005b;
-        public static final int detail=0x7f0b005e;
-        public static final int label=0x7f0b005d;
-        public static final int labeltext=0x7f0b005c;
+        public static final int band=0x7f0b005c;
+        public static final int detail=0x7f0b005f;
+        public static final int label=0x7f0b005e;
+        public static final int labeltext=0x7f0b005d;
         public static final int midtext=0x7f0b005a;
-        public static final int smalltext=0x7f0b005f;
+        public static final int newband=0x7f0b005b;
+        public static final int smalltext=0x7f0b0060;
     }
     public static final class styleable {
         /**  Attributes used to style the Action Bar. 

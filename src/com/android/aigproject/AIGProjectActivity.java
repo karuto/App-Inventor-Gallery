@@ -313,7 +313,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 			for (int i = 0; i < queries.length; i++) {
 				if (editTextList[i].getText() != null
 						&& editTextList[i].getText().toString().trim().length() != 0) {
-					queries[i] = title.getText().toString().trim();
+					queries[i] = editTextList[i].getText().toString().trim();
 					success = true;
 				} else {
 					queries[i] = null;
@@ -351,7 +351,7 @@ implements OnClickListener, ActionBar.OnNavigationListener {
 			nextScreen.putExtra("uid", curItem.uid);
 
 			Toast.makeText(AIGProjectActivity.this,
-					"position of " + curItem.title, Toast.LENGTH_SHORT).show();
+					"You picked: " + curItem.title, Toast.LENGTH_SHORT).show();
 
 			startActivity(nextScreen);
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_up_out);
